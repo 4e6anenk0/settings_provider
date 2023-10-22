@@ -1,4 +1,4 @@
-import 'package:example/main.dart';
+import 'package:example/multi_main.dart';
 import 'package:example/src/multi_settings_app/personal_screen.dart';
 import 'package:example/src/multi_settings_app/settings.dart';
 import 'package:flutter/material.dart';

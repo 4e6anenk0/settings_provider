@@ -25,9 +25,9 @@ All interaction with the settings happens through the `SettingsController`.
 
 ## Usage
 
-### The `Settings()` widget class. Example of the simplest usage
+### 1. The `Settings()` widget class. Example of the simplest usage
 
-#### 1. Property
+#### 1.1. Property
 
 To create a configuration, the package provides a `Property()` class that allows you to create a declarative configuration of settings.
 
@@ -49,7 +49,7 @@ const counterScaler = Property(
 
 `isLocalStored` - parameter that indicates whether data should be stored in local storage. Optional parameter. The default value is `false`.
 
-#### 2. Settings widget
+#### 1.2. Settings widget
 
 In order to use the package in your project, you need to wrap the application creation function in `Settings()` widget at the top level. This will allow you to get the configuration before the application UI starts rendering. This is necessary for consistent creation of the app, so that the configuration of the session matches the data of the local storage.
 
@@ -82,7 +82,7 @@ void main() async {
 }
 ```
 
-#### 3. Access to the settings
+#### 1.3. Access to the settings
 
 Once the settings have been implemented, you can refer to them to get them or update the values.
 
@@ -124,7 +124,7 @@ Here are the methods available to you for working with the settings:
 5) `match()` - update (synchronization) of all the data of the current session with the data of the local storage. Relevant for making changes after calls to setForSession()
 6) `getAll()` - returns Map() of all settings relevant for the current session
 
-#### 4. Helpers for access to settings
+#### 1.4. Helpers for access to settings
 
 For convenience, the library implements helpers functions for accessing settings. These are available via `context` references and make it even easier to work with a simple `Settings()`.
 
@@ -156,11 +156,11 @@ Settings.of(context, listen = true).get(property);
 
 Choose what is more convenient for you.
 
-### The `MultiSettings()` widget class. Example of the group usage
+### 2. The `MultiSettings()` widget class. Example of the group usage
 
 The library also provides the ability to create separate groups of settings. They will have separate areas of responsibility, that is, they will have their own controller and notification system. Next, we will go through the steps that must be taken in order to use this option in your project:
 
-1. Let's create separate configurations from properties:
+2.1. Let's create separate configurations from properties:
 
 First configuration:
 
@@ -184,7 +184,7 @@ const name = Property<String>(defaultValue: 'John', id: 'name');
 List<Property> secondSettigsConfig = [name];
 ```
 
-2. Let's create models for our property groups (to find them in the tree):
+2.2. Let's create models for our property groups (to find them in the tree):
 
 ```dart
 // A separate model for First screen settings
@@ -198,7 +198,7 @@ class SecondScreenSettings extends SettingsModel {
 }
 ```
 
-3. Let's create separate controllers with their own properties and uniq prefixes:
+2.3. Let's create separate controllers with their own properties and uniq prefixes:
 
 ```dart
 SettingsController firstScreenController = await SettingsController.consist(
@@ -212,7 +212,7 @@ SettingsController secondlScreenController = await SettingsController.consist(
 );
 ```
 
-4. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
+2.4. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
 
 ```dart
 runApp(
@@ -228,7 +228,7 @@ runApp(
   );
 ```
 
-#### Access to settings in MultiSettings
+2.5 Access to settings in MultiSettings
 
 ```dart
 Settings.of<FirstScreenSettings>(context).get(counterScaler);
@@ -236,15 +236,115 @@ Settings.of<FirstScreenSettings>(context).get(counterScaler);
 Settings.of<SecondScreenSettings>(context).get(name);
 ```
 
-### The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
+### 3. The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
 
 The Scenario() class is inherited from the Property() class. So, it can be considered that scenarios are similar to properties. Yes, although scenarios share many commonalities, they can't be processed without converting them to properties. This is the task of the ScenarioController(), which parses enums and transforms them to strings, creating mappings (Enum -> String) or (String -> Enum) for the current session of the app, and it creates a set of properties to be passed to the SettingsController().
 
-Why is it called "Scenario"? Scenarios characterize a sequence of actions according to a role. Each Enum value is unique in the context of building a unique configuration and associated UI. Therefore, a limited set of Enum values creates a specific set of configurations, making it a kind of distinct "scenario." Additionally, Scenario() can be used within the ConfigBuilder() class, which provides a way to build the SettingsController() with the corresponding set of related properties that depend on the Enum value in ConfigBuilder. This concept also resembles the notion of execution scenarios.
+#### 3.1. The `Scenario()` property
 
+Let's create scenario property:
+
+```dart
+var themeMode =
+    Scenario(
+      actions: ThemeMode.values, 
+      defaultValue: ThemeMode.dark
+    );
+```
+
+In our example, we use the standard Enum from the Flutter library known as the `ThemeMode`.
+
+As you can see, scenarios are very similar to properties. Unlike Property(), we should pass the parameter `actions`, which is of type `List<Enum>`. To get a list of enums you should call `Enum.values`. But the id parameter shouldn't be passed.
+
+#### 3.2. The `ScenarioController()` class
+
+Now we can create a scenario controller:
+
+```dart
+ScenarioController scenarioController =
+      await ScenarioController.init(scenarios: [themeMode]);
+```
+
+The general main() function would look like this:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SettingsController controller =
+      await SettingsController.consist(properties: settings);
+
+  ScenarioController scenarioController =
+      await ScenarioController.init(scenarios: [themeMode]);
+
+  runApp(
+    Settings(
+      controller: controller,
+      scenarioController: scenarioController,
+      child: const ScenarioApp(),
+    ),
+  );
+}
+```
+
+#### 3.3. Use a ScenarioBuilder to build a UI that depends on the Enum value
+
+```dart
+class ScenarioApp extends StatelessWidget {
+  const ScenarioApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScenarioBuilder(
+      builder: (context, action) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          initialRoute: '/',
+          theme: ThemeData(),
+          darkTheme: ThemeData.dark(),
+          themeMode: action,
+          home: const MyHomePage(title: 'Setting Scenario Example'),
+        );
+      },
+      scenario: themeMode,
+    );
+  }
+}
+```
+
+Consider `ScenarioBuilder()` individually:
+
+```dart
+ScenarioBuilder(
+      builder: (context, action) {
+        return MaterialApp(
+          ...
+          themeMode: action,
+          ...
+        );
+      },
+      scenario: themeMode,
+    );
+```
+
+As we can see, using Enum to build a dependent UI is quite simple. The `ScenarioBuilder()` class has its own builder that accepts `context` and `action`. The `action` itself is the Enum value we need and can use. And the `scenario` parameter accepts the `Scenario()` property on which the specific `ScenarioBuilder()` depends.
+
+#### Why is it called Scenario?
+
+Why is it called "Scenario"? Scenarios characterize a sequence of actions according to a role. Each Enum value is unique in the context of building a unique configuration and associated UI. Therefore, a limited set of Enum values creates a specific set of configurations, making it a kind of distinct "scenario." Additionally, Scenario() can be used within the ConfigBuilder() class, which provides a way to build the SettingsController() with the corresponding set of related properties that depend on the Enum value in ConfigBuilder. This concept also resembles the notion of execution scenarios.
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+I will be very glad for your active participation in the discussion, support and development of this library.
+
+## Roadmap
+
+Tasks that still need to be solved:
+
+- [ ] - Implementation of file local storage for settings
+- [ ] - Writing some basic tests and thoroughly analyzing the code for possible problems
+- [ ] - Support settings from `.env` file
+- [ ] - Support settings from `json` and `yaml` files
+- [ ] - Writing instructions for creating own data stores (for example, for network settings)
+- [ ] - Consider possible separation of settings_provider from Flutter
