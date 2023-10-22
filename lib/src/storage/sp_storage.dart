@@ -65,9 +65,9 @@ class SharedPrefStorage implements ISettingsStorage {
   }
 
   @override
-  bool isContains(String id) {
-    bool isContains = _storage.containsKey(id);
-    return isContains;
+  bool isContain(String id) {
+    bool isContain = _storage.containsKey(id);
+    return isContain;
   }
 
   @override

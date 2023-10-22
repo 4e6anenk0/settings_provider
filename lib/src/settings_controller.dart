@@ -123,7 +123,7 @@ class SettingsController implements ISettingsController {
     _keysMap[_snapshot.id] = _name(_snapshot.id);
 
     if (properties != null) {
-      if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
+      if (settingsStorage.isContain(_keysMap[_snapshot.id]!)) {
         List<String> snapshotData = settingsStorage.getSetting(
             _keysMap[_snapshot.id]!, _snapshot.defaultValue);
         _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
@@ -219,7 +219,7 @@ class SettingsController implements ISettingsController {
   /// A method that helps to remove settings that are not in the
   /// current list of propertyes and clear unused keys dump
   Future<void> clearCache() async {
-    if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
+    if (settingsStorage.isContain(_keysMap[_snapshot.id]!)) {
       // if the snapshot already exists, we get it
       List<String> snapshot = settingsStorage.getSetting(
           _keysMap[_snapshot.id]!, _snapshot.defaultValue);

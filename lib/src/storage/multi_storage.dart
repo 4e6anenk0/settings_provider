@@ -93,9 +93,9 @@ The init method was not implemented for the next storage: ${storage.runtimeType}
   }
 
   @override
-  bool isContains(String id) {
+  bool isContain(String id) {
     for (ISettingsStorage storage in _storages) {
-      if (storage.isContains(id)) {
+      if (storage.isContain(id)) {
         return true;
       }
     }

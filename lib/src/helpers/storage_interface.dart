@@ -4,5 +4,5 @@ abstract interface class ISettingsStorage {
   Future<void> setSetting(String id, Object value);
   Future<void> removeSetting(String id);
   Future<void> clear();
-  bool isContains(String id);
+  bool isContain(String id);
 }
