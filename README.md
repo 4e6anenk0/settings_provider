@@ -1,5 +1,9 @@
 # Settings Provider
 
+<p align="center">
+    <img src="/img/logo.png" alt="Logo">
+</p>
+
 A library for providing declarative configuration of app settings.
 
 ## Features
