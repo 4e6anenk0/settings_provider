@@ -8,32 +8,32 @@ A library for providing declarative configuration of app settings.
 
 ## Features
 
-- Description of configuration settings using declarative Properties;
-- Minimal work with term parameters. It is enough to describe the configuration only once;
+- Description of configuration settings using declarative properties;
 - It is convenient to separate settings from the project;
 - Handy methods and helper functions to manage settings;
-- Ability to react UI to changes in settings and receive settings from the context with InhertitedNotifier.
-- Ability to divide settings into groups via MultiSettings. This allows you to have a separate subscription to the relevant set of settings, which can be useful for performance and convenience in large projects
+- Ability to react UI to changes in settings and receive settings from the context with InhertitedNotifier;
+- Ability to divide settings into groups via `MultiSettings`. This allows you to have a separate subscription to the relevant set of settings, which can be useful for performance and convenience in large projects;
+- Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI.
 
 ## Getting started
 
-`settings_provider` implements several concepts that are familiar to both Flutter developers and not only. Let's get acquainted with the concept of the library in a little more detail.
+The `settings_provider` library implements several concepts that are familiar to both Flutter developers. Let's get acquainted with the concept of the library in a little more detail.
 
-`settings_provider` separates settings into local settings (delegated to the shared_preferences package) and current session settings. `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally and in the current session.
+The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
 
-All interaction with the settings happens through the `SettingsController`. Data changes do not occur through data mutation, but through replacement of the SettingsData instance. This is such an immutable Map object that has additional methods for obtaining and setting data in an immutable object.
+All interaction with the settings happens through the `SettingsController`.
 
 ## Usage
 
-### Settings(). Example of the simplest usage
+### The Settings() class. Example of the simplest usage
 
-#### Property
+#### 1. Property
 
 To create a configuration, the package provides a `Property()` class that allows you to create a declarative configuration of settings.
 
-**Property only describes the setting and does not have to match your current or local settings configuration.** This means you need only care about the default value and whether this preference should be stored in local storage (SharedPreferences).
+**Property only describes the setting and does not have to match your current or local settings configuration.** This means you need only care about the default value in you app and whether this value should be stored in local storage (SharedPreferences by default).
 
-For example:
+For example, create the first property:
 
 ```dart
 const counterScaler = Property(
@@ -45,15 +45,17 @@ const counterScaler = Property(
 
 `defaultValue` - the default value. It also specifies the type for the property.
 
-`id` - key for value or name. It is better to call it the same as the variable.
+`id` - key for value or name. It's better to call it the same as the variable.
 
 `isLocalStored` - parameter that indicates whether data should be stored in local storage. Optional parameter. The default value is `false`.
 
-#### Settings widget
+#### 2. Settings widget
 
-In order to use the package in your project, you need to wrap the application creation function in `Settings()` widget at the top level. This will allow you to get the configuration before the application UI starts rendering. This is necessary for consistent creation of the application, so that the configuration of the session matches the data of the local storage.
+In order to use the package in your project, you need to wrap the application creation function in `Settings()` widget at the top level. This will allow you to get the configuration before the application UI starts rendering. This is necessary for consistent creation of the app, so that the configuration of the session matches the data of the local storage.
 
-The Settings() widget is responsible for implementing settings in the widget tree. To implement settings, you need to create a controller asynchronously using the consit() static function and pass a list of properties as a parameter:
+The `Settings()` widget is responsible for implementing settings in the widget tree. To implement settings, you need to create a controller asynchronously using the `consit()` static function and pass a list of properties as a parameter:
+
+Example how to create controller. The `properties` parameter is `List<Property>`:
 
 ```dart
 SettingsController controller =
@@ -80,7 +82,7 @@ void main() async {
 }
 ```
 
-#### Access to settings
+#### 3. Access to the settings
 
 Once the settings have been implemented, you can refer to them to get them or update the values.
 
@@ -90,7 +92,9 @@ To do this, you need to refer to the static function `of()`, which is available 
 Settings.of(context).get(property);
 ```
 
-Each time we need to send a new property to return or change the setting. Do you need to create a new property with similar settings every time when you make a change to the settings? Yes, but you don't have to do it yourself ever. In order to make a change, you need to use the `copyWith()` method, which is well known to Flutter developers. For example, look how simple it is:
+A logical question arises... Do you need to create a new property with similar settings every time when you make a change to the settings? **Yes, but you don't have to do it yourself ever.**
+
+If you want to make a change in your settings, you need to use the `copyWith()` method, which is well known to Flutter developers. For example, look how simple it is:
 
 ```dart
 Settings.of(context).update(property.copyWith(defaultValue: newValue));
@@ -113,16 +117,18 @@ Here are the methods available to you for working with the settings:
   Map<String, Object> getAll(); 
 ```
 
-1) `update(property)` - to update setting values both locally and for the current session;
+1) `update(property)` - to update setting values both locally (if `true`) and for the current session;
 2) `get(property)` - to get the setting value;
 3) `setForSession(property)` - to set the value in the current session. This has no effect on saving the value in local storage, but causes listeners to be notified of the change in setting. This can be useful for changes only in the current session to a value that is stored locally, or for deferred saving to reduce the number of local storage accesses
 4) `setForLocal(property)` - sets the value for local storage only. Changes will be synchronized only after restarting the application (in a new session)
 5) `match()` - update (synchronization) of all the data of the current session with the data of the local storage. Relevant for making changes after calls to setForSession()
 6) `getAll()` - returns Map() of all settings relevant for the current session
 
-#### Helpers for access to settings
+#### 4. Helpers for access to settings
 
-For convenience, the library implements helpers functions for accessing settings. These are available via `context` references and make it even easier to work with a simple `Settings()`. But it should be noted that these methods are not available for `MultiSettings()`. Because they do not allow you to access the locked settings.
+For convenience, the library implements helpers functions for accessing settings. These are available via `context` references and make it even easier to work with a simple `Settings()`.
+
+But it should be noted that these methods are not available for `MultiSettings()`. Because this methods don't allow you to access the nested settings. If you know how to fix this so you can do something like: `context.getSetting<NameOfSettingsGroup>()`, I'd appreciate your ideas.
 
 Example:
 
@@ -150,7 +156,7 @@ Settings.of(context, listen = true).get(property);
 
 Choose what is more convenient for you.
 
-### MultiSettings()
+### The MultiSettings() class. Example of the group usage
 
 The library also provides the ability to create separate groups of settings. They will have separate areas of responsibility, that is, they will have their own controller and notification system. Next, we will go through the steps that must be taken in order to use this option in your project:
 
@@ -178,7 +184,7 @@ const name = Property<String>(defaultValue: 'John', id: 'name');
 List<Property> secondSettigsConfig = [name];
 ```
 
-2. Let's create models for our property groups:
+2. Let's create models for our property groups (to find them in the tree):
 
 ```dart
 // A separate model for First screen settings
@@ -192,12 +198,12 @@ class SecondScreenSettings extends SettingsModel {
 }
 ```
 
-3. Let's create separate controllers with their own properties:
+3. Let's create separate controllers with their own properties and uniq prefixes:
 
 ```dart
-SettingsController firstScreenController = await SettingsController.consist(properties: firstSettingsConfig);
+SettingsController firstScreenController = await SettingsController.consist(properties: firstSettingsConfig, prefix: "FirstPrefix.");
   
-SettingsController secondlScreenController = await SettingsController.consist(properties: secondSettigsConfig);
+SettingsController secondlScreenController = await SettingsController.consist(properties: secondSettigsConfig, prefix: "SecondPrefix.");
 ```
 
 4. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
