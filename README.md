@@ -1,7 +1,7 @@
 # Settings Provider
 
 <p align="center">
-    <img width=200 height=200 src="/img/logo-3.png" alt="Logo">
+    <img width=200 height=200 src="/img/logo-2.png" alt="Logo">
 </p>
 
 A library for providing declarative configuration of app settings.
