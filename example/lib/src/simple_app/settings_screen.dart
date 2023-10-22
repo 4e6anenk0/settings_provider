@@ -127,7 +127,6 @@ class DarkModeSetting extends StatelessWidget {
           // switch use the getSetting() method to get the value
           value: context.listenSetting(isDarkMode),
           onChanged: (newValue) {
-            print(newValue);
             if (newValue != context.getSetting(isDarkMode)) {
               // if newValue is different we can update our settings
               context

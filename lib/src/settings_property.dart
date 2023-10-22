@@ -43,8 +43,3 @@ class Property<T> {
     );
   }
 }
-
-class FlutterPrefix<T extends bool> extends Property<T> {
-  FlutterPrefix({defaultValue = true, id = 'FlutterPrefix'})
-      : super(defaultValue: defaultValue, id: id);
-}
