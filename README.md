@@ -1,7 +1,7 @@
 # Settings Provider
 
 <p align="center">
-    <img width=200 height=200 src="/img/logo-2.png" alt="Logo">
+    <img width=200 height=200 src="/img/logo-3.png" alt="Logo">
 </p>
 
 A library for providing declarative configuration of app settings.
@@ -25,7 +25,7 @@ All interaction with the settings happens through the `SettingsController`.
 
 ## Usage
 
-### The Settings() class. Example of the simplest usage
+### The `Settings()` widget class. Example of the simplest usage
 
 #### 1. Property
 
@@ -156,7 +156,7 @@ Settings.of(context, listen = true).get(property);
 
 Choose what is more convenient for you.
 
-### The MultiSettings() class. Example of the group usage
+### The `MultiSettings()` widget class. Example of the group usage
 
 The library also provides the ability to create separate groups of settings. They will have separate areas of responsibility, that is, they will have their own controller and notification system. Next, we will go through the steps that must be taken in order to use this option in your project:
 
@@ -201,9 +201,15 @@ class SecondScreenSettings extends SettingsModel {
 3. Let's create separate controllers with their own properties and uniq prefixes:
 
 ```dart
-SettingsController firstScreenController = await SettingsController.consist(properties: firstSettingsConfig, prefix: "FirstPrefix.");
+SettingsController firstScreenController = await SettingsController.consist(
+  properties: firstSettingsConfig, 
+  prefix: "FirstPrefix."
+);
   
-SettingsController secondlScreenController = await SettingsController.consist(properties: secondSettigsConfig, prefix: "SecondPrefix.");
+SettingsController secondlScreenController = await SettingsController.consist(
+  properties: secondSettigsConfig, 
+  prefix: "SecondPrefix."
+);
 ```
 
 4. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
@@ -230,6 +236,7 @@ Settings.of<FirstScreenSettings>(context).get(counterScaler);
 Settings.of<SecondScreenSettings>(context).get(name);
 ```
 
+### The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
 
 ## Additional information
 
