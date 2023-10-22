@@ -4,7 +4,7 @@ export './src/settings.dart';
 export './src/settings_controller.dart';
 export './src/settings_property.dart';
 
-export './src/storage/storage_interface.dart';
+export 'src/helpers/storage_interface.dart';
 export './src/storage/sp_storage.dart';
 export './src/storage/file_storage.dart';
 

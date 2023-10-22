@@ -1,4 +1,4 @@
-import 'storage_interface.dart';
+import '../helpers/storage_interface.dart';
 
 class FileStorage implements ISettingsStorage {
   @override

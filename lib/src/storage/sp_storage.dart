@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'storage_interface.dart';
+import '../helpers/storage_interface.dart';
 
 class SharedPrefStorage implements ISettingsStorage {
   late SharedPreferences _storage;

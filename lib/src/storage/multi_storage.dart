@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'storage_interface.dart';
+import '../helpers/storage_interface.dart';
 
 class MultiSettingsStorage implements ISettingsStorage {
   MultiSettingsStorage({

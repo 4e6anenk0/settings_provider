@@ -5,7 +5,7 @@ import 'settings_property.dart';
 import 'storage/multi_storage.dart';
 import 'storage/single_storage.dart';
 import 'storage/sp_storage.dart';
-import 'storage/storage_interface.dart';
+import 'helpers/storage_interface.dart';
 
 /// A controller that allows you to manage immutable settings configuration
 class SettingsController implements ISettingsController {

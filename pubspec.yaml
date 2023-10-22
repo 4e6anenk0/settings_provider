@@ -1,10 +1,13 @@
 name: settings_provider
-description: A new Flutter package project.
+description: A library for providing declarative configuration of app settings (wraper for shared_preference).
 version: 0.0.2
-homepage:
+homepage: https://github.com/4e6anenk0/settings_provider/tree/main
+repository: https://github.com/4e6anenk0/settings_provider/tree/main
+issue_tracker: https://github.com/4e6anenk0/settings_provider/issues
+topics: [settings, settings-management]
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
@@ -16,6 +19,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
 
-flutter:
+screenshots:
+  - description: The settings_provider package logo.
+    path: img/logo-2.png
