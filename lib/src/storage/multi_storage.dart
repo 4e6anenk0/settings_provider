@@ -41,9 +41,8 @@ class MultiSettingsStorage implements ISettingsStorage {
     return null;
   }
 
-  /// Метод который не вызывает исключения для повторной инициализации хранилищ
-  /// настроек. Это необходимо для выполнения в фоне, если первая инициализация не
-  /// удалась
+  /// A method that doesn't trigger exceptions for reinitializing the settings storage.
+  /// This is necessary for background execution if the initial initialization fails.
   Future<bool> reinitForNotInited({ISettingsStorage? storage}) async {
     if (storage != null && _storagesWasNotInited.contains(storage) == false) {
       return reinitStorage(storage);
@@ -55,8 +54,8 @@ class MultiSettingsStorage implements ISettingsStorage {
     return true;
   }
 
-  /// вспомогательный метод, для инициализации хранилища без вызовов исключений.
-  /// Исключение появляется в случае отсуцтвия реализации выбросом UnimplementedError
+  /// A helper method for initializing the storage without throwing exceptions.
+  /// An exception occurs if the implementation is missing, throwing an UnimplementedError.
   Future<bool> reinitStorage(ISettingsStorage storage) async {
     try {
       await storage.init();
@@ -71,12 +70,10 @@ The init method was not implemented for the next storage: ${storage.runtimeType}
     }
   }
 
-  /// Метод инициализации. Позволяет инициализировать все хранилища которое
-  /// находятся в переменной _storages. Обработка исключений необходимо для
-  /// того, чтобы программа работала беспрепятсвенно. Логика за обработку
-  /// всех возможных исключений лежит на клиентском коде. Данная библиотека не
-  /// обрабатывает исключения. Она лишь сохраняет список адресов списка для повторного
-  /// вызова инициализации
+  /// Initialization method. Allows initializing all storage present in the _storages variable.
+  /// Exception handling is necessary to ensure the program runs smoothly. The logic for
+  /// handling all possible exceptions lies in the client code. This library does not
+  /// handle exceptions. It simply stores a list of addresses for re-initialization.
   @override
   Future<void> init() async {
     for (ISettingsStorage storage in _storages) {
