@@ -1,9 +1,9 @@
 import '../../settings_provider.dart';
 import '../helpers/settings_controller_interface.dart';
 
-/// Клас для керування налаштуваннями Enum через Scenario властивості
+/// A class for managing `Enum` settings through `Scenario` properties.
 ///
-/// Реалізує надбудову над базовим класом SettingsController для Property
+/// Implements an extension over the base `SettingsController` class for `Property`.
 class ScenarioController implements ISettingsController {
   ScenarioController._(this.scenarios, this._prefix);
 
@@ -29,11 +29,11 @@ class ScenarioController implements ISettingsController {
     }
   }
 
-  /// Метод яка оброблює список сценаріїв та формує з них Map зіставлення та
-  /// список властивостей, які можна зберігати у сховищі.
+  /// A method that processes a list of scenarios and creates a mapping and a
+  /// list of properties that can be stored in storage.
   ///
-  /// Хоча Scenario і є класом який успадкований від Property, але неможливо
-  /// зберігати значення Enum без попередньої конвертації.
+  /// While Scenario is a class based on Property, it's not possible
+  /// to store Enum values without conversion.
   void _prepareConvertedScenarios(List<Scenario> scenarios) {
     for (Scenario scenario in scenarios) {
       _parseScenarioEnums(scenario);
@@ -41,9 +41,9 @@ class ScenarioController implements ISettingsController {
     }
   }
 
-  /// Метод для парсингу значень Enum та формування Map зіставлення для
-  /// поточної програми. Кожен раз, коли налаштування у коді будуть змінені,
-  /// буде побудоване нове зіставлення Enum -> String, String -> Enum.
+  /// A method for parsing Enum values and creating mapping for
+  /// the current program. Every time, when settings in the code is changed,
+  /// a new mapping Enum -> String, String -> Enum will be create.
   _parseScenarioEnums(Scenario scenario) {
     for (Enum action in scenario.actions) {
       _mapEnumToString[action] = action.name;
@@ -51,7 +51,7 @@ class ScenarioController implements ISettingsController {
     }
   }
 
-  /// Метод для конвертації Scenario до придатного для зберігання Property
+  /// A method for converting Scenario into a format suitable for storage as Property.
   Property<String> _convertScenarioToProperty(Scenario scenario) {
     return Property(
         defaultValue: _mapEnumToString[scenario.defaultValue]!,

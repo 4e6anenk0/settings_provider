@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
-/// Клас для побудови налаштувань які зіставлені з Enum.
+/// A class for building settings associated with Enum values.
 ///
-/// Scenario можна розглядати як звичайне Property. До нього також можна отримати
-/// доступ через методи які є і y звичайного Property. Відмінність
-/// Scenario полягає в тому, що даний клас дозволяє зручно використовувати Enum
-/// для збереження у локальному сховищі для повторного зіставлення з відповідним
-/// Enum після відновлення сесії. А завдяки ScenarioBuilder можна лекго
-/// створювати динамічні конфігурації, які залежаті від Enum
+/// Scenario can be treated as a Property. It can also be accessed through
+/// methods similar to those in a standard Property. The difference is its
+/// ability to handy use Enum in a local storage for re-mapping with
+/// the corresponding Enum after inited new session.
+/// With the ScenarioBuilder, dynamic configurations that depend on Enum can be
+/// easily created.
 class Scenario<T extends Enum> extends Property<T> {
   Scenario(
       {required this.actions,

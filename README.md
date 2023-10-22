@@ -238,6 +238,11 @@ Settings.of<SecondScreenSettings>(context).get(name);
 
 ### The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
 
+The Scenario() class is inherited from the Property() class. So, it can be considered that scenarios are similar to properties. Yes, although scenarios share many commonalities, they can't be processed without converting them to properties. This is the task of the ScenarioController(), which parses enums and transforms them to strings, creating mappings (Enum -> String) or (String -> Enum) for the current session of the app, and it creates a set of properties to be passed to the SettingsController().
+
+Why is it called "Scenario"? Scenarios characterize a sequence of actions according to a role. Each Enum value is unique in the context of building a unique configuration and associated UI. Therefore, a limited set of Enum values creates a specific set of configurations, making it a kind of distinct "scenario." Additionally, Scenario() can be used within the ConfigBuilder() class, which provides a way to build the SettingsController() with the corresponding set of related properties that depend on the Enum value in ConfigBuilder. This concept also resembles the notion of execution scenarios.
+
+
 ## Additional information
 
 TODO: Tell users more about the package: where to find more information, how to

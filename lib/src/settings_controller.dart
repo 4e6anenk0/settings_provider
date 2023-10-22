@@ -62,18 +62,17 @@ class SettingsController implements ISettingsController {
     return controller;
   }
 
-  /// список усіх сховищ для збереження налаштувань
+  /// List of all repositories to save settings.
   final List<ISettingsStorage> _storages;
 
-  /// клас який обробляє окреме сховище чи декілька сховищ
+  /// A class that handles a single repository or multiple repositories.
   late final ISettingsStorage settingsStorage;
 
-  /// флаг для перевірки статусу ініціалізації. Необхідно для випадків лінивої
-  /// ініціалізації
+  /// Flag to check initialization status. Required for lazy initialization cases.
   bool _isInited = false;
   bool get isInited => _isInited;
 
-  /// A set of properties that are declarative descriptions of settings parameters
+  /// A set of properties that are declarative descriptions of settings parameters.
   late final List<Property>? properties;
 
   /// Adds a prefix to the settings keys.
@@ -84,9 +83,9 @@ class SettingsController implements ISettingsController {
   /// final bool _usePrefix;
   final String? _prefix;
 
-  /// знімок використовується для ініціалізації, щоб аналізувати поля які вже
-  /// збережені в локальному сховищі та відновлювати, у противному випадку
-  /// зберігати нові не збережені налаштування
+  /// /// snapshot is used for initialization to analyze fields already saved
+  /// in local storage and restore it, otherwise save new unsaved settings and
+  /// remove the unnecessary ones.
   Property<List<String>> _snapshot =
       const Property(defaultValue: [], id: 'Snapshot', isLocalStored: true);
 
@@ -242,8 +241,6 @@ class SettingsController implements ISettingsController {
         }
       });
     }
-    // Видалимо ключі, щоб можна було потім підгрузити нові налаштування часу виконнання
-    //_keysMap.clear();
   }
 
   /// A function that helps to update data from the property.
