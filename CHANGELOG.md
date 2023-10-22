@@ -9,3 +9,7 @@
 * Some interfaces have been created: for building repositories and controllers;
 * Implemented work with Shared Preferences separately from the controller;
 * Created a separate type of settings and additional classes to build a dependent UI from Enum.
+
+## 0.1.0
+
+* first release on pub.dev
