@@ -17,7 +17,7 @@ A library for providing declarative configuration of app settings.
 
 ## Getting started
 
-The `settings_provider` library implements several concepts that are familiar to both Flutter developers. Let's get acquainted with the concept of the library in a little more detail.
+The `settings_provider` library implements several concepts that are familiar to Flutter developers. Let's get acquainted with the concept of the library in a little more detail.
 
 The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
 

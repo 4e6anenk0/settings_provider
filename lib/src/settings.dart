@@ -200,11 +200,6 @@ class _SettingsProviderState<T extends SettingsModel>
     extends SingleChildState<SettingsProvider<T>> {
   late final T model = widget.model;
 
-  /* late final controller = SettingsController(properties: properties);
-  late final ScenarioController? scenarioController;
-  late final model =
-      SettingsModel(controller, scenarioController: scenarioController); */
-
   @override
   void dispose() {
     model.dispose();

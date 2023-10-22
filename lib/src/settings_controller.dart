@@ -44,7 +44,7 @@ class SettingsController implements ISettingsController {
     return controller;
   }
 
-  /// A static function that allows you to create and initialize a controller asynchronously.
+  /// A static method that allows you to create and initialize a controller asynchronously.
   ///
   /// This will allow you to get the data stored in SharedPreferences,
   /// but may cause a delay, for example, if there is a lot of data.
@@ -161,9 +161,7 @@ class SettingsController implements ISettingsController {
   }
 
   Future<void> _initSettingsMap(List<Property> properties) async {
-    //_keys.clear();
     for (Property property in properties) {
-      //_keys.add(_getName(property.id));
       var name = _name(property.id);
 
       _keysMap[property.id] = name;
@@ -189,22 +187,21 @@ class SettingsController implements ISettingsController {
     await _makeSettingsSnapshot(properties);
   }
 
-  /// Function to restore data from local storage
+  /// Method to restore data from local storage
   Future<void> _restoreSetting(Property property) async {
     var value = await settingsStorage.getSetting(
         _keysMap[property.id]!, property.defaultValue);
-    //print('Restored value: ' + value.toString());
     _sessionSettings[property.id] = value;
   }
 
-  /// Function for setting data to local storage
+  /// Method for setting data to local storage
   Future<void> _initSetting(Property property) async {
     await settingsStorage.setSetting(
         _keysMap[property.id]!, property.defaultValue);
     _sessionSettings[property.id] = property.defaultValue;
   }
 
-  /// Function to create a snapshot.
+  /// Method to create a snapshot.
   ///
   /// The snapshot allows you to clear the local storage
   Future<void> _makeSettingsSnapshot(List<Property> propertyes) async {
@@ -215,13 +212,11 @@ class SettingsController implements ISettingsController {
       }
     }
     Property snapshotProperty = _snapshot.copyWith(defaultValue: keysList);
-    //Function callback = _storage.set(keysList.runtimeType);
-    //await callback(_snapshotName, keysList);
     await settingsStorage.setSetting(
         _keysMap[snapshotProperty.id]!, snapshotProperty.defaultValue);
   }
 
-  /// A function that helps to remove settings that are not in the
+  /// A method that helps to remove settings that are not in the
   /// current list of propertyes and clear unused keys dump
   Future<void> clearCache() async {
     if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
@@ -243,13 +238,12 @@ class SettingsController implements ISettingsController {
     }
   }
 
-  /// A function that helps to update data from the property.
+  /// A method that helps to update data from the property.
   ///
   /// The data is updated both in the local storage and in the copy of the data
   /// of the current session.
   @override
   Future<void> update<T>(Property property) async {
-    //String key = _keysMap[property.id]!;
     if (_sessionSettings.containsKey(property.id)) {
       _sessionSettings[property.id] = property.defaultValue;
       if (property.isLocalStored) {
@@ -269,7 +263,6 @@ class SettingsController implements ISettingsController {
 
   @override
   Future<void> setForLocal<T>(Property property) async {
-    //String key = _getName(property.id);
     if (property.isLocalStored) {
       await settingsStorage.setSetting(
           _keysMap[property.id]!, property.defaultValue);
@@ -296,7 +289,7 @@ class SettingsController implements ISettingsController {
     return _sessionSettings;
   }
 
-  /// A function that helps to get data from a property.
+  /// A method that helps to get data from a property.
   ///
   /// First, the presence of data in the SettingsData object is checked.
   /// If there is no data in SettingsData for some reason,
@@ -304,7 +297,6 @@ class SettingsController implements ISettingsController {
   /// is returned from the property.
   @override
   T get<T>(Property<T> property) {
-    //String key = _getName(property.id);
     // get from SettingsData object
     if (_sessionSettings.containsKey(property.id)) {
       return _sessionSettings[property.id] as T;

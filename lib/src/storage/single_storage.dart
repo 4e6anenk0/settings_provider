@@ -38,7 +38,7 @@ The init method was not implemented for the next storage: ${_storage.runtimeType
   }
 
   Future<bool> reinitForNotInited() async {
-    if (_isInited == false) {
+    if (!_isInited) {
       try {
         await _storage.init();
         return true;
@@ -51,10 +51,7 @@ The init method was not implemented for the next storage: ${_storage.runtimeType
 
   @override
   bool isContains(String id) {
-    if (_storage.isContains(id)) {
-      return true;
-    }
-    return false;
+    return (_storage.isContains(id));
   }
 
   @override

@@ -21,7 +21,7 @@ extension SettingsContextHelper on BuildContext {
     return Settings.of(this, listen: true).get(property);
   }
 
-  /// A function for updating data values of both the current session
+  /// A method for updating data values of both the current session
   /// and data stored in local storage.
   ///
   /// This method executes asynchronously in the background.
@@ -29,7 +29,7 @@ extension SettingsContextHelper on BuildContext {
     await Settings.of(this).update(property);
   }
 
-  /// A function that allows you to set a value in the data of the application (current session).
+  /// A method that allows you to set a value in the data of the application (current session).
   ///
   /// It takes less cost, time and is not an asynchronous operation.
   /// This can be useful for frequent changes of the current state
@@ -39,14 +39,14 @@ extension SettingsContextHelper on BuildContext {
     Settings.of(this).setForSession(property);
   }
 
-  /// Function to set the setting value immediately to local storage.
+  /// Method to set the setting value immediately to local storage.
   ///
   /// This takes time and will not be synchronized until the application is restarted.
   Future<void> setLocalSetting(Property property) async {
     await Settings.of(this).setForLocal(property);
   }
 
-  /// A function that reconciles all the settings of the current session to the local storage.
+  /// A method that reconciles all the settings of the current session to the local storage.
   ///
   /// May take longer to execute than other functions because it needs to iterate over
   /// and save all new properties. It is useful to do after changes setSessionSetting(),
@@ -55,7 +55,7 @@ extension SettingsContextHelper on BuildContext {
     await Settings.of(this).match();
   }
 
-  /// A function that allows you to get a Map object of all the settings of the current session.
+  /// A method that allows you to get a Map object of all the settings of the current session.
   Map<String, Object> getAllSettings() {
     return Settings.of(this).getAll();
   }
