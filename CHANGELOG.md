@@ -13,3 +13,7 @@
 ## 0.1.0
 
 * first release on pub.dev
+
+## 0.1.1
+
+* some fixes in docs and code

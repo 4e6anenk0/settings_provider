@@ -50,8 +50,8 @@ The init method was not implemented for the next storage: ${_storage.runtimeType
   }
 
   @override
-  bool isContain(String id) {
-    return _storage.isContain(id);
+  bool isContains(String id) {
+    return _storage.isContains(id);
   }
 
   @override

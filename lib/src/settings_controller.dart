@@ -123,7 +123,7 @@ class SettingsController implements ISettingsController {
     _keysMap[_snapshot.id] = _name(_snapshot.id);
 
     if (properties != null) {
-      if (settingsStorage.isContain(_keysMap[_snapshot.id]!)) {
+      if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
         List<String> snapshotData = settingsStorage.getSetting(
             _keysMap[_snapshot.id]!, _snapshot.defaultValue);
         _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
@@ -219,7 +219,7 @@ class SettingsController implements ISettingsController {
   /// A method that helps to remove settings that are not in the
   /// current list of propertyes and clear unused keys dump
   Future<void> clearCache() async {
-    if (settingsStorage.isContain(_keysMap[_snapshot.id]!)) {
+    if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
       // if the snapshot already exists, we get it
       List<String> snapshot = settingsStorage.getSetting(
           _keysMap[_snapshot.id]!, _snapshot.defaultValue);
@@ -238,10 +238,6 @@ class SettingsController implements ISettingsController {
     }
   }
 
-  /// A method that helps to update data from the property.
-  ///
-  /// The data is updated both in the local storage and in the copy of the data
-  /// of the current session.
   @override
   Future<void> update<T>(Property property) async {
     if (_sessionSettings.containsKey(property.id)) {
@@ -283,21 +279,13 @@ class SettingsController implements ISettingsController {
     }
   }
 
-  /// A method for obtaining the Map object of all settings of the current session.
   @override
   Map<String, Object> getAll() {
     return _sessionSettings;
   }
 
-  /// A method that helps to get data from a property.
-  ///
-  /// First, the presence of data in the SettingsData object is checked.
-  /// If there is no data in SettingsData for some reason,
-  /// then the data is obtained either from the local storage or the default value
-  /// is returned from the property.
   @override
   T get<T>(Property<T> property) {
-    // get from SettingsData object
     if (_sessionSettings.containsKey(property.id)) {
       return _sessionSettings[property.id] as T;
       // get from local store
@@ -307,7 +295,6 @@ class SettingsController implements ISettingsController {
       // if exist return, else return default value
       return value ?? property.defaultValue;
     } else {
-      // default
       return property.defaultValue;
     }
   }
