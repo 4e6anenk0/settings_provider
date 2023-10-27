@@ -31,9 +31,6 @@ class _ScenarioBuilderState<T extends Enum> extends State<ScenarioBuilder<T>> {
   }
 
   Widget _builder(context, action) {
-    if (widget.scenario.scenario != null) {
-      widget.scenario.scenario!(context, action);
-    }
     return widget.builder(context, action);
   }
 

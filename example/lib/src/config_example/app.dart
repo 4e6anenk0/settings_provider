@@ -1,21 +1,19 @@
-import 'package:example/src/multi_settings_app/home_screen.dart';
-import 'package:example/src/multi_settings_app/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
-import '../../multi_main.dart';
+import 'home_screen.dart';
+import 'settings.dart';
 
-class MultiSettingsApp extends StatelessWidget {
-  const MultiSettingsApp({super.key});
+class ConfigApp extends StatelessWidget {
+  const ConfigApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       ThemeData theme;
       // uses setting to get data from SettingsData
-      /* if (Settings.of<HomeScreenSettings>(context, listen: true)
-          .get(isDarkMode)) { */
-      if (context.getSetting<HomeScreenSettings, bool>(isDarkMode)) {
+      if (context.listenSetting(isDarkMode)) {
         theme = ThemeData.dark(useMaterial3: true);
       } else {
         theme = ThemeData(useMaterial3: true);
