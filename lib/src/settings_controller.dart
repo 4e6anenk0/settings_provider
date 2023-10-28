@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:settings_provider/src/helpers/exceptions.dart';
+
 import 'helpers/settings_controller_interface.dart';
 import 'settings_property.dart';
 import 'storage/multi_storage.dart';
@@ -160,8 +162,21 @@ class SettingsController implements ISettingsController {
     }
   }
 
+  bool isUniqueID(String id) {
+    if (_keysMap.containsKey(id)) {
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _initSettingsMap(List<Property> properties) async {
     for (Property property in properties) {
+      if (!isUniqueID(property.id)) {
+        throw NotUniqueIdExeption(
+            "A non-unique ID (${property.id}) in the property was passed",
+            property.id);
+      }
+
       var name = _name(property.id);
 
       _keysMap[property.id] = name;
