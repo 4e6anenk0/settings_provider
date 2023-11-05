@@ -5,12 +5,12 @@ import 'package:settings_provider/settings_provider.dart';
 
 // A separate model for home screen settings
 class HomeScreenSettings extends SettingsModel {
-  HomeScreenSettings(super.controller);
+  HomeScreenSettings({required super.settingsController});
 }
 
 // A separate model for personal screen settings
 class PersonalScreenSettings extends SettingsModel {
-  PersonalScreenSettings(super.controller);
+  PersonalScreenSettings({required super.settingsController});
 }
 
 void main() async {
@@ -29,9 +29,14 @@ void main() async {
     MultiSettings(
       // And we implement our models using SettingsProvider
       providers: [
-        SettingsProvider(model: HomeScreenSettings(homeScreenController)),
         SettingsProvider(
-            model: PersonalScreenSettings(personalScreenController)),
+            model: HomeScreenSettings(
+          settingsController: homeScreenController,
+        )),
+        SettingsProvider(
+            model: PersonalScreenSettings(
+          settingsController: personalScreenController,
+        )),
       ],
       child: const MultiSettingsApp(),
     ),

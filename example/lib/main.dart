@@ -14,7 +14,7 @@ void main() async {
 
   runApp(
     Settings(
-      controller: controller,
+      settingsController: controller,
       child: const SimpleApp(),
     ),
   );

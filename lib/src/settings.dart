@@ -32,14 +32,14 @@ import 'settings_property.dart';
 class Settings extends StatefulWidget {
   const Settings(
       {super.key,
-      required this.controller,
+      required this.settingsController,
       this.scenarioController,
       required this.child});
 
   final Widget child;
 
   /// A controller is required to manage settings
-  final SettingsController controller;
+  final SettingsController settingsController;
 
   final ScenarioController? scenarioController;
 
@@ -73,8 +73,10 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  late final model = SettingsModel(widget.controller,
-      scenarioController: widget.scenarioController);
+  late final model = SettingsModel(
+    settingsController: widget.settingsController,
+    scenarioController: widget.scenarioController,
+  );
 
   @override
   void dispose() {
@@ -93,7 +95,8 @@ class _SettingsState extends State<Settings> {
 
 /// A class that inherits `InheritedNotifier`
 /// and serves only to implement `SettingsModel` in the context
-class SettingsNotifier<T extends SettingsModel> extends InheritedNotifier<T> {
+class SettingsNotifier<T extends BaseSettingsModel>
+    extends InheritedNotifier<T> {
   const SettingsNotifier({
     super.key,
     required super.child,
@@ -104,17 +107,23 @@ class SettingsNotifier<T extends SettingsModel> extends InheritedNotifier<T> {
 /// This class is just a wrapper over `SettingsController` and implements the
 /// same interface as `SettingsController` to manage the controller calls
 /// and notify listeners via `ChangeNotifier`
-class SettingsModel extends ChangeNotifier implements ISettingsController {
-  SettingsModel(this._controller, {this.scenarioController});
-  final SettingsController _controller;
-  final ScenarioController? scenarioController;
+class SettingsModel extends BaseSettingsModel {
+  SettingsModel({required settingsController, scenarioController})
+      : _settingsController = settingsController,
+        _scenarioController = scenarioController;
+
+  final SettingsController _settingsController;
+  final ScenarioController? _scenarioController;
+
+  ScenarioController? get scenarioController => _scenarioController;
+  SettingsController get settingsController => _settingsController;
 
   @override
   T get<T>(Property<T> property) {
     if (scenarioController != null && property is Scenario) {
       return scenarioController!.get(property);
     }
-    return _controller.get(property);
+    return settingsController.get(property);
   }
 
   @override
@@ -123,7 +132,7 @@ class SettingsModel extends ChangeNotifier implements ISettingsController {
       scenarioController!.update(property);
       notifyListeners();
     } else {
-      await _controller.update(property);
+      await settingsController.update(property);
       notifyListeners();
     }
   }
@@ -133,7 +142,7 @@ class SettingsModel extends ChangeNotifier implements ISettingsController {
     if (scenarioController != null && property is Scenario) {
       await scenarioController!.setForLocal(property);
     } else {
-      await _controller.setForLocal(property);
+      await settingsController.setForLocal(property);
     }
   }
 
@@ -143,7 +152,7 @@ class SettingsModel extends ChangeNotifier implements ISettingsController {
       scenarioController!.setForSession(property);
       notifyListeners();
     } else {
-      _controller.setForSession(property);
+      settingsController.setForSession(property);
       notifyListeners();
     }
   }
@@ -153,15 +162,18 @@ class SettingsModel extends ChangeNotifier implements ISettingsController {
     if (scenarioController != null) {
       await scenarioController!.match();
     } else {
-      await _controller.match();
+      await settingsController.match();
     }
   }
 
   @override
   Map<String, Object> getAll() {
-    return _controller.getAll();
+    return settingsController.getAll();
   }
 }
+
+abstract class BaseSettingsModel extends ChangeNotifier
+    implements ISettingsController {}
 
 /// Need to provide Settings in MultiSettings. A class that helps to nest `SettingsNotifier` inside each other
 /// with corresponding unique `SettingsModel` models to enable separation of settings
@@ -175,7 +187,7 @@ class SettingsModel extends ChangeNotifier implements ISettingsController {
 ///  HomeScreenSettings(super.controller);
 ///}
 /// ```
-class SettingsProvider<T extends SettingsModel>
+class SettingsProvider<T extends BaseSettingsModel>
     extends SingleChildStatefulWidget {
   const SettingsProvider({required this.model, super.key});
 
@@ -184,19 +196,11 @@ class SettingsProvider<T extends SettingsModel>
   /// a separate SettingsData
   final T model;
 
-/*   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return SettingsNotifier<T>(
-      notifier: model,
-      child: child!,
-    );
-  } */
-
   @override
   State<SettingsProvider<T>> createState() => _SettingsProviderState<T>();
 }
 
-class _SettingsProviderState<T extends SettingsModel>
+class _SettingsProviderState<T extends BaseSettingsModel>
     extends SingleChildState<SettingsProvider<T>> {
   late final T model = widget.model;
 

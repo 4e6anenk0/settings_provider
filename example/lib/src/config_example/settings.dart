@@ -1,12 +1,33 @@
 import 'package:settings_provider/settings_provider.dart';
 
-const isDarkMode = Property<bool>(
-  defaultValue: false,
-  id: 'isDarkMode',
-  isLocalStored: true,
-);
+class GeneralConfig extends ConfigModel {
+  @override
+  String get id => 'General';
 
-const counterScaler =
-    Property<int>(defaultValue: 1, id: 'counterScaler', isLocalStored: true);
+  @override
+  List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
-List<Property> settings = [isDarkMode, counterScaler];
+  @override
+  List<Property> get properties => [isDarkMode, counterScaler, name];
+
+  @override
+  List<Scenario<Enum>>? get scenarios => null;
+
+  static Property<bool> isDarkMode = const Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: true,
+  );
+
+  static Property<int> counterScaler = const Property(
+    defaultValue: 1,
+    id: 'counterScaler',
+    isLocalStored: false,
+  );
+
+  static Property<String> name = const Property(
+    defaultValue: "Jonh",
+    id: 'name',
+    isLocalStored: false,
+  );
+}

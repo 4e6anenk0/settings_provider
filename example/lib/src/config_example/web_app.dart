@@ -4,8 +4,8 @@ import 'package:settings_provider/settings_provider.dart';
 import 'home_screen.dart';
 import 'settings.dart';
 
-class ConfigApp extends StatelessWidget {
-  const ConfigApp({super.key});
+class ConfigAppForWeb extends StatelessWidget {
+  const ConfigAppForWeb({super.key});
 
   // This widget is the root of your application.
   @override
@@ -20,10 +20,10 @@ class ConfigApp extends StatelessWidget {
       }
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Flutter Web Demo',
         initialRoute: '/',
         theme: theme,
-        home: const MyHomePage(title: 'Setting Example'),
+        home: const MyHomePage(title: 'Its Web version!'),
       );
     });
   }
