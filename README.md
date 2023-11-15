@@ -6,10 +6,6 @@
 
 A library for providing declarative configuration of app settings.
 
-<a align="center" href="https://pub.dev/packages/settings_provider">
-    <img width=300 src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
-</a>
-
 ## Features
 
 - Description of configuration settings using declarative properties;
@@ -18,6 +14,12 @@ A library for providing declarative configuration of app settings.
 - Ability to react UI to changes in settings and receive settings from the context with InhertitedNotifier;
 - Ability to divide settings into groups via `MultiSettings`. This allows you to have a separate subscription to the relevant set of settings, which can be useful for performance and convenience in large projects;
 - Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI.
+
+<p align="center">
+  <a href="https://pub.dev/packages/settings_provider">
+    <img width=200 src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
+  </a>
+</p>
 
 ## Getting started
 
