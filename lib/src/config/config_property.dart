@@ -15,21 +15,6 @@ enum ConfigPlatform {
 }
 
 abstract class ConfigModel extends BaseSettingsModel {
-  /* ConfigModel({
-    required List<Property> properties,
-    required List<ConfigPlatform> platforms,
-    required String id,
-    List<Scenario>? scenarios,
-  })  : _properties = properties,
-        _scenarios = scenarios,
-        _platforms = platforms,
-        _id = id;
- */
-  /*  final List<Property> _properties;
-  final List<Scenario>? _scenarios;
-  final List<ConfigPlatform> _platforms;
-  final String _id; */
-
   List<Property> get properties;
   List<Scenario>? get scenarios;
   List<ConfigPlatform> get platforms;
@@ -37,7 +22,11 @@ abstract class ConfigModel extends BaseSettingsModel {
 
   late final SettingsController _settingsController;
   late final ScenarioController? _scenarioController;
+
+  @override
   ScenarioController? get scenarioController => _scenarioController;
+
+  @override
   SettingsController get settingsController => _settingsController;
 
   Future<bool> init() async {

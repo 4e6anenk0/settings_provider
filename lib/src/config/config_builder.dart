@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+/* import 'package:flutter/widgets.dart';
 
 import '../helpers/exceptions.dart';
 import '../settings.dart';
@@ -9,6 +9,7 @@ class ConfigBuilder extends StatefulWidget {
   const ConfigBuilder({
     super.key,
     required this.builder,
+    required this.configController,
     this.configs,
   });
 
@@ -16,30 +17,33 @@ class ConfigBuilder extends StatefulWidget {
 
   final List<ConfigModel>? configs;
 
+  final ConfigController configController;
+
   @override
   State<ConfigBuilder> createState() => _ConfigProviderState();
 }
 
 class _ConfigProviderState extends State<ConfigBuilder> {
   late final ConfigPlatform _platform;
-  late final List<ConfigModel> _configs;
-  late final List<SettingsProvider> _providers;
+  late final List<ConfigsProvider> _configs;
+  late final List<ConfigsProvider> _providers;
   late final int _configLenght;
 
   _prepare() {
-    _platform = Config.platform;
+    _platform = widget.configController.platform;
     if (widget.configs != null) {
       _configs = [];
       _configs.addAll(widget.configs!);
       _configLenght = _configs.length;
     } else {
-      _configs = Config.getAllConfigs();
+      _configs = widget.configController.getAllConfigs();
       _configLenght = _configs.length;
       if (_configLenght == 1) {
         return;
       } else if (_configLenght > 1) {
+        _providers = [];
         for (ConfigModel config in _configs) {
-          _providers.add(SettingsProvider(model: config));
+          _providers.add(ConfigsProvider(model: config));
         }
       } else {
         throw ConfigBuilderExeption("No config provided for this platform.");
@@ -96,4 +100,4 @@ Widget build(BuildContext context) {
         }
       },
     );
-  } */
+  } */ */

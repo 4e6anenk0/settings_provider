@@ -41,8 +41,9 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text =
-        context.getSetting(GeneralConfig.counterScaler).toString();
+    _textController.text = Config.of<GeneralConfig>(context)
+        .get(GeneralConfig.counterScaler)
+        .toString();
   }
 
   @override
@@ -69,10 +70,12 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  context.updateSetting(GeneralConfig.counterScaler
+                  Config.of<GeneralConfig>(context).update(GeneralConfig
+                      .counterScaler
                       .copyWith(defaultValue: _scaler));
                 } else {
-                  context.updateSetting(GeneralConfig.counterScaler);
+                  Config.of<GeneralConfig>(context)
+                      .update(GeneralConfig.counterScaler);
                 }
               },
               onChanged: (value) async {
@@ -88,8 +91,8 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                value = context
-                                    .getSetting(GeneralConfig.counterScaler)
+                                value = Config.of<GeneralConfig>(context)
+                                    .get(GeneralConfig.counterScaler)
                                     .toString();
                                 Navigator.pop(context);
                               },
@@ -127,11 +130,14 @@ class DarkModeSetting extends StatelessWidget {
         ),
         Switch(
           // switch use the getSetting() method to get the value
-          value: context.listenSetting(GeneralConfig.isDarkMode),
+          value: Config.of<GeneralConfig>(context, listen: true)
+              .get(GeneralConfig.isDarkMode),
           onChanged: (newValue) {
-            if (newValue != context.getSetting(GeneralConfig.isDarkMode)) {
+            if (newValue !=
+                Config.of<GeneralConfig>(context)
+                    .get(GeneralConfig.isDarkMode)) {
               // if newValue is different we can update our settings
-              context.updateSetting(
+              Config.of<GeneralConfig>(context, listen: true).update(
                   GeneralConfig.isDarkMode.copyWith(defaultValue: newValue));
             }
           },

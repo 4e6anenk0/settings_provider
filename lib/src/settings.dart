@@ -69,11 +69,11 @@ class Settings extends StatefulWidget {
   }
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Settings> createState() => _ConfigState();
 }
 
-class _SettingsState extends State<Settings> {
-  late final model = SettingsModel(
+class _ConfigState extends State<Settings> {
+  late final SettingsModel model = SettingsModel(
     settingsController: widget.settingsController,
     scenarioController: widget.scenarioController,
   );
@@ -95,8 +95,7 @@ class _SettingsState extends State<Settings> {
 
 /// A class that inherits `InheritedNotifier`
 /// and serves only to implement `SettingsModel` in the context
-class SettingsNotifier<T extends BaseSettingsModel>
-    extends InheritedNotifier<T> {
+class SettingsNotifier<T extends SettingsModel> extends InheritedNotifier<T> {
   const SettingsNotifier({
     super.key,
     required super.child,
@@ -115,7 +114,10 @@ class SettingsModel extends BaseSettingsModel {
   final SettingsController _settingsController;
   final ScenarioController? _scenarioController;
 
+  @override
   ScenarioController? get scenarioController => _scenarioController;
+
+  @override
   SettingsController get settingsController => _settingsController;
 
   @override
@@ -173,7 +175,12 @@ class SettingsModel extends BaseSettingsModel {
 }
 
 abstract class BaseSettingsModel extends ChangeNotifier
-    implements ISettingsController {}
+    implements ISettingsController {
+  BaseSettingsModel();
+
+  ScenarioController? get scenarioController;
+  SettingsController get settingsController;
+}
 
 /// Need to provide Settings in MultiSettings. A class that helps to nest `SettingsNotifier` inside each other
 /// with corresponding unique `SettingsModel` models to enable separation of settings
@@ -187,7 +194,7 @@ abstract class BaseSettingsModel extends ChangeNotifier
 ///  HomeScreenSettings(super.controller);
 ///}
 /// ```
-class SettingsProvider<T extends BaseSettingsModel>
+class SettingsProvider<T extends SettingsModel>
     extends SingleChildStatefulWidget {
   const SettingsProvider({required this.model, super.key});
 
@@ -200,7 +207,7 @@ class SettingsProvider<T extends BaseSettingsModel>
   State<SettingsProvider<T>> createState() => _SettingsProviderState<T>();
 }
 
-class _SettingsProviderState<T extends BaseSettingsModel>
+class _SettingsProviderState<T extends SettingsModel>
     extends SingleChildState<SettingsProvider<T>> {
   late final T model = widget.model;
 

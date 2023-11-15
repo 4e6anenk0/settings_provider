@@ -13,7 +13,8 @@ class ConfigApp extends StatelessWidget {
     return Builder(builder: (context) {
       ThemeData theme;
       // uses setting to get data from SettingsData
-      if (context.listenSetting(GeneralConfig.isDarkMode)) {
+      if (Config.of<GeneralConfig>(context, listen: true)
+          .get(GeneralConfig.isDarkMode)) {
         theme = ThemeData.dark(useMaterial3: true);
       } else {
         theme = ThemeData(useMaterial3: true);

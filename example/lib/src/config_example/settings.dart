@@ -26,8 +26,28 @@ class GeneralConfig extends ConfigModel {
   );
 
   static Property<String> name = const Property(
-    defaultValue: "Jonh",
+    defaultValue: "John",
     id: 'name',
+    isLocalStored: false,
+  );
+}
+
+class WebConfig extends ConfigModel {
+  @override
+  String get id => 'WebConfig';
+
+  @override
+  List<ConfigPlatform> get platforms => [ConfigPlatform.web];
+
+  @override
+  List<Property> get properties => [title];
+
+  @override
+  List<Scenario<Enum>>? get scenarios => null;
+
+  static Property<String> title = const Property(
+    defaultValue: "It's Web App!",
+    id: 'title',
     isLocalStored: false,
   );
 }

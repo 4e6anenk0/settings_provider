@@ -13,7 +13,8 @@ class MultiSettingsApp extends StatelessWidget {
     return Builder(builder: (context) {
       ThemeData theme;
       // uses setting to get data from SettingsData
-      if (context.listenSetting<HomeScreenSettings, bool>(isDarkMode)) {
+      if (Settings.of<HomeScreenSettings>(context, listen: true)
+          .get(isDarkMode)) {
         theme = ThemeData.dark(useMaterial3: true);
       } else {
         theme = ThemeData(useMaterial3: true);
