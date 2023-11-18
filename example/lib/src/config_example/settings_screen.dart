@@ -41,9 +41,9 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text = Config.of<GeneralConfig>(context)
-        .get(GeneralConfig.counterScaler)
-        .toString();
+    _scaler =
+        Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
+    _textController.text = _scaler.toString();
   }
 
   @override
@@ -70,10 +70,12 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
+                  print("new scaler: $_scaler");
                   Config.of<GeneralConfig>(context).update(GeneralConfig
                       .counterScaler
                       .copyWith(defaultValue: _scaler));
                 } else {
+                  print("!!!!");
                   Config.of<GeneralConfig>(context)
                       .update(GeneralConfig.counterScaler);
                 }
@@ -102,7 +104,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                     },
                   );
                 } else if (value == '') {
-                  _scaler = 0;
+                  _scaler = 1;
                 }
               }),
         ),
@@ -137,7 +139,7 @@ class DarkModeSetting extends StatelessWidget {
                 Config.of<GeneralConfig>(context)
                     .get(GeneralConfig.isDarkMode)) {
               // if newValue is different we can update our settings
-              Config.of<GeneralConfig>(context, listen: true).update(
+              Config.of<GeneralConfig>(context).update(
                   GeneralConfig.isDarkMode.copyWith(defaultValue: newValue));
             }
           },

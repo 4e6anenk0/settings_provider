@@ -12,23 +12,27 @@ void main() async {
 
   config.registerAll([GeneralConfig(), WebConfig()]); */
 
-  //var generalConfig = GeneralConfig();
-  //var webConfig = WebConfig();
+  var generalConfig = GeneralConfig();
+  var webConfig = WebConfig();
 
-  //await generalConfig.init();
-  //await webConfig.init();
+  await generalConfig.init();
+  await webConfig.init();
 
-  Configurator.register(GeneralConfig());
-  Configurator.register(WebConfig());
-
-  Configurator.init;
+  //await Config.init();
 
 /*   await config.init(); */
 
   runApp(
-    ConfigProvider(
+    Config(
+      providers: [
+        ConfigProvider(
+          config: generalConfig,
+        ),
+        ConfigProvider(
+          config: webConfig,
+        )
+      ],
       child: ConfigAppForWeb(),
-      providers: Configurator.providers,
     ),
   );
 

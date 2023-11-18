@@ -3,6 +3,7 @@ import '../scenarios/scenario_controller.dart';
 import '../settings.dart';
 import '../settings_controller.dart';
 import '../settings_property.dart';
+import 'config_provider.dart';
 
 enum ConfigPlatform {
   ios,
@@ -29,18 +30,35 @@ abstract class ConfigModel extends BaseSettingsModel {
   @override
   SettingsController get settingsController => _settingsController;
 
-  Future<bool> init() async {
-    try {
-      _settingsController =
-          await SettingsController.consist(properties: properties, prefix: id);
-      if (scenarios != null) {
-        _scenarioController = await ScenarioController.init(
-            scenarios: scenarios, prefix: '$id.Scenario.');
-      } else {
-        _scenarioController = null;
-      }
+  bool _isInited = false;
+  bool get isInited => _isInited;
+
+  bool _isCorrectPlatform() {
+    if (platforms.contains(ConfigPlatform.general) ||
+        platforms.contains(Config.platform)) {
       return true;
-    } catch (e) {
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> init() async {
+    if (_isCorrectPlatform()) {
+      try {
+        _settingsController = await SettingsController.consist(
+            properties: properties, prefix: id);
+        if (scenarios != null) {
+          _scenarioController = await ScenarioController.init(
+              scenarios: scenarios, prefix: '$id.Scenario.');
+        } else {
+          _scenarioController = null;
+        }
+        _isInited = true;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    } else {
       return false;
     }
   }

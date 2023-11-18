@@ -2,13 +2,38 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
-import 'package:settings_provider/src/config/config_provider.dart';
+import 'package:settings_provider/src/scenarios/scenario.dart';
+import 'package:settings_provider/src/settings_property.dart';
 
-import '../helpers/exceptions.dart';
-
+import '../helpers/settings_controller_interface.dart';
 import 'config_property.dart';
 
-class Config {
+class EmptyConfig extends ConfigModel {
+  @override
+  String get id => runtimeType.toString();
+
+  @override
+  List<ConfigPlatform> get platforms => [];
+
+  @override
+  List<Property> get properties => [];
+
+  @override
+  List<Scenario<Enum>>? get scenarios => [];
+}
+
+class ConfigsController {
+  ConfigsController(configs) : _configs = configs;
+
+  final Map<String, ConfigModel> _configs;
+
+  ConfigModel getConfig(String id) {
+    var config = _configs[id];
+    return config ?? EmptyConfig();
+  }
+}
+
+/* class Config {
   static T of<T extends ConfigModel>(BuildContext context,
       {bool listen = false}) {
     if (listen == true) {
@@ -27,29 +52,8 @@ class Config {
       return provider?.notifier as T;
     }
   }
-}
 
-class Configurator {
-  static final List<ConfigsProvider> providers = [];
-
-  static void register(config) {
-    providers.add(ConfigsProvider(model: config));
-  }
-
-  static init() async {
-    if (providers.isNotEmpty) {
-      await Future.wait(providers.map((provider) => provider.model.init()));
-    } else {
-      throw Exception("Missing configurations for target platform.");
-    }
-  }
-}
-
-class ConfigController {
-  final Map<String, ConfigsProvider> _providers = {};
-  late final ConfigPlatform platform = _getConfigPlatform();
-
-  ConfigPlatform _getConfigPlatform() {
+  static ConfigPlatform _getConfigPlatform() {
     if (kIsWeb) {
       return ConfigPlatform.web;
     } else {
@@ -69,39 +73,40 @@ class ConfigController {
     return ConfigPlatform.general;
   }
 
-  void register<T extends ConfigModel>(T config) {
-    if (config.platforms.contains(platform) ||
-        config.platforms.contains(ConfigPlatform.general)) {
-      _providers[config.id] = ConfigsProvider(model: config);
-    }
-  }
+  static final Map<String, ConfigModel> _configs = {};
+  static final ConfigPlatform platform = _getConfigPlatform();
 
-  void registerAll<T extends ConfigModel>(List<T> configs) {
-    for (T config in configs) {
+  static void register(List<ConfigModel> configs) {
+    for (ConfigModel config in configs) {
       if (config.platforms.contains(platform) ||
           config.platforms.contains(ConfigPlatform.general)) {
-        _providers[config.id] = ConfigsProvider(model: config);
+        _configs[config.id] = config;
       }
     }
   }
 
-  ConfigsProvider? getProvider(String id) {
-    return _providers[id];
-  }
-
-  List<ConfigsProvider> getAllProviders<T>() {
-    return _providers.values.toList();
-  }
-
-  Future<void> init() async {
-    if (_providers.isNotEmpty) {
-      await Future.wait(
-          _providers.values.map((provider) => provider.model.init()));
-    } else {
-      throw EmptyTargetConfigs("Missing configurations for target platform.");
+  static void registerAnyway(List<ConfigModel> configs) {
+    for (ConfigModel config in configs) {
+      _configs[config.id] = config;
     }
   }
-}
+
+  static ConfigModel getConfig(String id) {
+    return _configs[id] ?? EmptyConfig();
+  }
+
+  static List<ConfigModel> getAllConfigs() {
+    return _configs.values.toList();
+  }
+
+  static Future<void> init() async {
+    if (_configs.isNotEmpty) {
+      await Future.wait(_configs.values.map((config) => config.init()));
+    } else {
+      throw Exception("Missing configurations for target platform.");
+    }
+  }
+} */
 
 /// A class that inherits `InheritedNotifier`
 /// and serves only to implement `SettingsModel` in the context
@@ -113,30 +118,33 @@ class ConfigNotifier<T extends ConfigModel> extends InheritedNotifier<T> {
   });
 }
 
-class ConfigsProvider<T extends ConfigModel> extends SingleChildStatefulWidget {
-  const ConfigsProvider({required this.model, super.key});
+class ConfigProvider<T extends ConfigModel> extends SingleChildStatefulWidget {
+  const ConfigProvider({required this.config, super.key});
 
-  /// A separate unique instance of the SettingsModel class that allows you
-  /// to use SettingsController for a group of unique settings in the form of
-  /// a separate SettingsData
-  final T model;
+  final T config;
 
   @override
-  State<ConfigsProvider<T>> createState() => _SettingsProviderState<T>();
+  State<ConfigProvider<T>> createState() => _SettingsProviderState<T>();
 }
 
 class _SettingsProviderState<T extends ConfigModel>
-    extends SingleChildState<ConfigsProvider<T>> {
-  late final T model = widget.model;
+    extends SingleChildState<ConfigProvider<T>> {
+/*   late final T model = widget.config;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   void dispose() {
     model.dispose();
     super.dispose();
-  }
+  } */
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
-    return ConfigNotifier(notifier: model, child: child!);
+    return ConfigNotifier(notifier: widget.config, child: child!);
   }
 }

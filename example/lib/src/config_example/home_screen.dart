@@ -15,18 +15,20 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  late final int _scaler;
+//  late final int _scaler;
 
   @override
   void initState() {
     super.initState();
-    _scaler =
+/*     _scaler =
         Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
+    print("currentScaler: $_scaler"); */
   }
 
   void _incrementCounter() {
     setState(() {
-      _counter += _scaler;
+      _counter +=
+          Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
     });
   }
 
