@@ -10,18 +10,7 @@ class NotUniqueIdExeption implements Exception {
   }
 }
 
-class ConfigBuilderExeption implements Exception {
-  ConfigBuilderExeption(this.message);
-
-  final String message;
-
-  @override
-  String toString() {
-    return "ConfigBuilderExeption: $message.";
-  }
-}
-
-class EmptyTargetConfigs implements Exception {
+/* class EmptyTargetConfigs implements Exception {
   EmptyTargetConfigs(this.message);
 
   final String message;
@@ -31,3 +20,4 @@ class EmptyTargetConfigs implements Exception {
     return "EmptyTargetConfigs: $message.";
   }
 }
+ */

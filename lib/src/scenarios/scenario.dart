@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:settings_provider/settings_provider.dart';
+
+import '../../settings_provider.dart';
 
 /// A class for building settings associated with Enum values.
 ///

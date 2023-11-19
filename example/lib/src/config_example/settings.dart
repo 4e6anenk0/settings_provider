@@ -13,6 +13,12 @@ class GeneralConfig extends ConfigModel {
   @override
   List<Scenario<Enum>>? get scenarios => null;
 
+  @override
+  List<ISettingsStorage>? get scenarioStorages => null;
+
+  @override
+  List<ISettingsStorage>? get settingsStorages => null;
+
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
     id: 'isDarkMode',
@@ -38,6 +44,12 @@ class WebConfig extends ConfigModel {
 
   @override
   List<ConfigPlatform> get platforms => [ConfigPlatform.web];
+
+  @override
+  List<ISettingsStorage>? get scenarioStorages => null;
+
+  @override
+  List<ISettingsStorage>? get settingsStorages => null;
 
   @override
   List<Property> get properties => [title];

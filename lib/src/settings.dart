@@ -95,7 +95,8 @@ class _ConfigState extends State<Settings> {
 
 /// A class that inherits `InheritedNotifier`
 /// and serves only to implement `SettingsModel` in the context
-class SettingsNotifier<T extends SettingsModel> extends InheritedNotifier<T> {
+class SettingsNotifier<T extends BaseSettingsModel>
+    extends InheritedNotifier<T> {
   const SettingsNotifier({
     super.key,
     required super.child,
@@ -194,20 +195,17 @@ abstract class BaseSettingsModel extends ChangeNotifier
 ///  HomeScreenSettings(super.controller);
 ///}
 /// ```
-class SettingsProvider<T extends SettingsModel>
+class SettingsProvider<T extends BaseSettingsModel>
     extends SingleChildStatefulWidget {
   const SettingsProvider({required this.model, super.key});
 
-  /// A separate unique instance of the SettingsModel class that allows you
-  /// to use SettingsController for a group of unique settings in the form of
-  /// a separate SettingsData
   final T model;
 
   @override
   State<SettingsProvider<T>> createState() => _SettingsProviderState<T>();
 }
 
-class _SettingsProviderState<T extends SettingsModel>
+class _SettingsProviderState<T extends BaseSettingsModel>
     extends SingleChildState<SettingsProvider<T>> {
   late final T model = widget.model;
 

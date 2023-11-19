@@ -40,7 +40,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text = context.getSetting(counterScaler).toString();
+    _textController.text = context.setting().get(counterScaler).toString();
   }
 
   @override
@@ -67,10 +67,11 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  context.updateSetting(
-                      counterScaler.copyWith(defaultValue: _scaler));
+                  context
+                      .setting()
+                      .update(counterScaler.copyWith(defaultValue: _scaler));
                 } else {
-                  context.updateSetting(counterScaler);
+                  context.setting().update(counterScaler);
                 }
               },
               onChanged: (value) async {
@@ -87,7 +88,8 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                           TextButton(
                               onPressed: () {
                                 value = context
-                                    .getSetting(counterScaler)
+                                    .setting()
+                                    .get(counterScaler)
                                     .toString();
                                 Navigator.pop(context);
                               },
@@ -125,12 +127,13 @@ class DarkModeSetting extends StatelessWidget {
         ),
         Switch(
           // switch use the getSetting() method to get the value
-          value: context.listenSetting(isDarkMode),
+          value: context.listenSetting().get(isDarkMode),
           onChanged: (newValue) {
-            if (newValue != context.getSetting(isDarkMode)) {
+            if (newValue != context.setting().get(isDarkMode)) {
               // if newValue is different we can update our settings
               context
-                  .updateSetting(isDarkMode.copyWith(defaultValue: newValue));
+                  .setting()
+                  .update(isDarkMode.copyWith(defaultValue: newValue));
             }
           },
         ),

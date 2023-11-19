@@ -5,15 +5,24 @@ import '../helpers/settings_controller_interface.dart';
 ///
 /// Implements an extension over the base `SettingsController` class for `Property`.
 class ScenarioController implements ISettingsController {
-  ScenarioController._(this.scenarios, this._prefix);
+  ScenarioController._(this.scenarios, this._prefix, this._storages);
 
-  static Future<ScenarioController> init(
-      {List<Scenario>? scenarios, String? prefix}) async {
-    ScenarioController controller = ScenarioController._(scenarios, prefix);
+  static Future<ScenarioController> init({
+    List<Scenario>? scenarios,
+    String? prefix,
+    List<ISettingsStorage>? storages,
+  }) async {
+    ScenarioController controller = ScenarioController._(
+      scenarios,
+      prefix,
+      storages,
+    );
     await controller._init();
     return controller;
   }
 
+  /// List of all repositories to save settings.
+  final List<ISettingsStorage>? _storages;
   late final List<Scenario>? scenarios;
   final String? _prefix;
   final Map<Enum, String> _mapEnumToString = {};
@@ -25,7 +34,9 @@ class ScenarioController implements ISettingsController {
     if (scenarios != null) {
       _prepareConvertedScenarios(scenarios!);
       _settingsController = await SettingsController.consist(
-          properties: _convertedScenarios, prefix: _prefix ?? '.Scenarios');
+          properties: _convertedScenarios,
+          prefix: _prefix ?? '.Scenarios',
+          storages: _storages);
     }
   }
 

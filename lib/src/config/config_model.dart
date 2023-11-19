@@ -1,9 +1,4 @@
-import '../scenarios/scenario.dart';
-import '../scenarios/scenario_controller.dart';
-import '../settings.dart';
-import '../settings_controller.dart';
-import '../settings_property.dart';
-import 'config_provider.dart';
+import '../../settings_provider.dart';
 
 enum ConfigPlatform {
   ios,
@@ -19,6 +14,8 @@ abstract class ConfigModel extends BaseSettingsModel {
   List<Property> get properties;
   List<Scenario>? get scenarios;
   List<ConfigPlatform> get platforms;
+  List<ISettingsStorage>? get settingsStorages;
+  List<ISettingsStorage>? get scenarioStorages;
   String get id;
 
   late final SettingsController _settingsController;
@@ -46,10 +43,12 @@ abstract class ConfigModel extends BaseSettingsModel {
     if (_isCorrectPlatform()) {
       try {
         _settingsController = await SettingsController.consist(
-            properties: properties, prefix: id);
+            properties: properties, prefix: id, storages: settingsStorages);
         if (scenarios != null) {
           _scenarioController = await ScenarioController.init(
-              scenarios: scenarios, prefix: '$id.Scenario.');
+              scenarios: scenarios,
+              prefix: '$id.Scenario.',
+              storages: scenarioStorages);
         } else {
           _scenarioController = null;
         }

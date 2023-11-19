@@ -11,8 +11,7 @@ export 'src/scenarios/scenario.dart';
 export 'src/scenarios/scenario_builder.dart';
 export 'src/scenarios/scenario_controller.dart';
 
-export 'src/config/config_property.dart';
-export 'src/config/config.dart';
+export 'src/config/config_model.dart';
 export 'src/config/config_builder.dart';
 export 'src/config/config_provider.dart';
 

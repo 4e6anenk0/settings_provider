@@ -1,3 +1,4 @@
+import 'package:example/src/config_example/app.dart';
 import 'package:example/src/config_example/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
@@ -5,12 +6,7 @@ import 'package:settings_provider/settings_provider.dart';
 import 'src/config_example/web_app.dart';
 
 void main() async {
-  // the binding on which Flutter depends must be done as a matter of priority
   WidgetsFlutterBinding.ensureInitialized();
-/* 
-  var config = ConfigController();
-
-  config.registerAll([GeneralConfig(), WebConfig()]); */
 
   var generalConfig = GeneralConfig();
   var webConfig = WebConfig();
@@ -18,26 +14,30 @@ void main() async {
   await generalConfig.init();
   await webConfig.init();
 
-  //await Config.init();
-
-/*   await config.init(); */
-
-  runApp(
+/*   runApp(
     Config(
       providers: [
-        ConfigProvider(
-          config: generalConfig,
+        SettingsProvider(
+          model: generalConfig,
         ),
-        ConfigProvider(
-          config: webConfig,
+        SettingsProvider(
+          model: webConfig,
         )
       ],
       child: ConfigAppForWeb(),
     ),
-  );
+  ); */
 
-  /* runApp(
+  runApp(
     ConfigBuilder(
+      providers: [
+        SettingsProvider(
+          model: generalConfig,
+        ),
+        SettingsProvider(
+          model: webConfig,
+        )
+      ],
       builder: (context, platform) {
         if (platform == ConfigPlatform.web) {
           return const ConfigAppForWeb();
@@ -46,5 +46,5 @@ void main() async {
         }
       },
     ),
-  ); */
+  );
 }

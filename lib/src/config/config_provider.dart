@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
@@ -35,29 +34,29 @@ class Config<T extends SingleChildWidget> extends StatefulWidget {
     return ConfigPlatform.general;
   }
 
-  List<T> _getInitedConfigs() {
+  List<T> _getInitedSettingsProviders() {
     List<T> initedProviders = [];
     for (T provider in providers) {
-      var checkObject = provider as ConfigProvider;
-      if (checkObject.config.isInited) {
+      var checkObject = provider as SettingsProvider<ConfigModel>;
+      if (checkObject.model.isInited) {
         initedProviders.add(provider);
       }
     }
     return initedProviders;
   }
 
-  static T of<T extends ConfigModel>(BuildContext context,
+  static T of<T extends BaseSettingsModel>(BuildContext context,
       {bool listen = false}) {
     if (listen == true) {
-      ConfigNotifier<T>? provider =
-          context.dependOnInheritedWidgetOfExactType<ConfigNotifier<T>>();
+      SettingsNotifier<T>? provider =
+          context.dependOnInheritedWidgetOfExactType<SettingsNotifier<T>>();
       if (provider == null && null is! T) {
         throw Exception('Not founded provided Settings');
       }
       return provider?.notifier as T;
     } else {
-      ConfigNotifier<T>? provider =
-          context.getInheritedWidgetOfExactType<ConfigNotifier<T>>();
+      SettingsNotifier<T>? provider =
+          context.getInheritedWidgetOfExactType<SettingsNotifier<T>>();
       if (provider == null && null is! T) {
         throw Exception('Not founded provided Settings');
       }
@@ -79,7 +78,7 @@ class _ConfigState<T extends SingleChildWidget> extends State<Config<T>> {
   @override
   void initState() {
     super.initState();
-    _providers = widget._getInitedConfigs();
+    _providers = widget._getInitedSettingsProviders();
   }
 
   @override

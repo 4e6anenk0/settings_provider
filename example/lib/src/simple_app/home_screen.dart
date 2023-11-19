@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-      _counter += context.getSetting(counterScaler);
+      _counter += context.setting().get(counterScaler);
     });
   }
 
