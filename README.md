@@ -17,7 +17,7 @@ A library for providing declarative configuration of app settings.
 - Automatic detection of the platform and implementation of settings depending on this platform.
 - Use `Config` and `ConfigBuilder` to group settings by platform.
 
-<div align="center">
+<div align="center" vertical-align="middle">
 
   <a href="https://pub.dev/packages/settings_provider">
       <img width="200" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
