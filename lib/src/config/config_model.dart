@@ -46,11 +46,9 @@ abstract class ConfigModel extends BaseSettingsModel {
             properties: properties, prefix: id, storages: settingsStorages);
         if (scenarios != null) {
           _scenarioController = await ScenarioController.init(
-              scenarios: scenarios,
+              scenarios: scenarios!,
               prefix: '$id.Scenario.',
               storages: scenarioStorages);
-        } else {
-          _scenarioController = null;
         }
         _isInited = true;
         return true;

@@ -51,14 +51,14 @@ class Config<T extends SingleChildWidget> extends StatefulWidget {
       SettingsNotifier<T>? provider =
           context.dependOnInheritedWidgetOfExactType<SettingsNotifier<T>>();
       if (provider == null && null is! T) {
-        throw Exception('Not founded provided Settings');
+        throw Exception('Not founded provided Config');
       }
       return provider?.notifier as T;
     } else {
       SettingsNotifier<T>? provider =
           context.getInheritedWidgetOfExactType<SettingsNotifier<T>>();
       if (provider == null && null is! T) {
-        throw Exception('Not founded provided Settings');
+        throw Exception('Not founded provided Config');
       }
       return provider?.notifier as T;
     }

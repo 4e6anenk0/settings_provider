@@ -70,12 +70,10 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  print("new scaler: $_scaler");
                   Config.of<GeneralConfig>(context).update(GeneralConfig
                       .counterScaler
                       .copyWith(defaultValue: _scaler));
                 } else {
-                  print("!!!!");
                   Config.of<GeneralConfig>(context)
                       .update(GeneralConfig.counterScaler);
                 }

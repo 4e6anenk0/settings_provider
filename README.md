@@ -18,6 +18,54 @@ A library for providing declarative configuration of app settings.
 
 ## Quick start. Example
 
+### Simple usage
+
+settings.dart:
+
+```dart
+SettingsController controller =
+      await SettingsController.consist(properties: settings);
+```
+
+main.dart:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SettingsController controller =
+      await SettingsController.consist(properties: settings);
+
+  runApp(
+    Settings(
+      settingsController: controller,
+      child: const SimpleApp(),
+    ),
+  );
+}
+```
+
+access to the settings:
+
+```dart
+// get setting without subscription
+context.setting().get(property);
+// or
+Settings.of(context).get(property);
+
+// get setting with subscription
+context.listenSetting().get(property);
+// or
+Settings.of(context, listen: true).get(property);
+
+// update setting
+context.setting().update(property);
+// or 
+Settings.of(context).update(property);
+```
+
+### More functionality usage
+
 settings.dart:
 
 ```dart
@@ -60,23 +108,66 @@ main.dart:
 
 ```dart
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  var generalConfig = GeneralConfig();
 
-  Config.register(GeneralConfig());
-  Config.init();
+  await generalConfig.init();
 
   runApp(
-    ConfigProvider(
-      child: ConfigApp());
+    Config(
+      providers: [
+        SettingsProvider(
+          model: generalConfig,
+        ),
+      ],
+      child: ConfigAppForWeb(),
+    ),
   );
 }
+```
+
+access to the settings:
+
+```dart
+// get setting without subscription
+context.config().get(property);
+// or
+Config.of(context).get(property);
+
+// get setting with subscription
+context.listenConfig().get(property);
+// or
+Config.of(context, listen: true).get(property);
+
+// update config
+context.config().update(property);
+// or 
+Config.of(context).update(property);
+```
+
+Access settings if you have more than 1 cofig:
+
+```dart
+// get setting without subscription
+context.config<GeneralConfig>().get(property);
+// or
+Config.of<GeneralConfig>(context).get(property);
+
+// get setting with subscription
+context.listenConfig<GeneralConfig>().get(property);
+// or
+Config.of<GeneralConfig>(context, listen: true).get(property);
+
+// update config
+context.config().update(property);
+// or 
+Config.of(context).update(property);
 ```
 
 ## Getting started
 
 The `settings_provider` library implements several concepts that are familiar to Flutter developers. Let's get acquainted with the concept of the library in a little more detail.
 
-The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
+The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
 
 All interaction with the settings happens through the `SettingsController`.
 
@@ -185,12 +276,10 @@ Here are the methods available to you for working with the settings:
 
 For convenience, the library implements helpers functions for accessing settings. These are available via `context` references and make it even easier to work with a simple `Settings()`.
 
-But it should be noted that these methods are not available for `MultiSettings()`. Because this methods don't allow you to access the nested settings. If you know how to fix this so you can do something like: `context.getSetting<NameOfSettingsGroup>()`, I'd appreciate your ideas.
-
 Example:
 
 ```dart
-context.getSetting(property);
+context.setting().get(property);
 ```
 
 Instead:
@@ -291,6 +380,12 @@ runApp(
 Settings.of<FirstScreenSettings>(context).get(counterScaler);
 
 Settings.of<SecondScreenSettings>(context).get(name);
+
+// or
+
+context.setting<FirstScreenSettings>().get(counterScaler);
+
+context.setting<SecondScreenSettings>().get(name);
 ```
 
 ### 3. The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
@@ -391,9 +486,9 @@ As we can see, using Enum to build a dependent UI is quite simple. The `Scenario
 
 Why is it called "Scenario"? Scenarios characterize a sequence of actions according to a role. Each Enum value is unique in the context of building a unique configuration and associated UI. Therefore, a limited set of Enum values creates a specific set of configurations, making it a kind of distinct "scenario." Additionally, Scenario() can be used within the ConfigBuilder() class, which provides a way to build the SettingsController() with the corresponding set of related properties that depend on the Enum value in ConfigBuilder. This concept also resembles the notion of execution scenarios.
 
-### 4. The `ConfigModel()` property class with `ConfigBuilder()` or `ConfigProvider()` widget class. Example of usage
+### 4. The `ConfigModel()` property class with `ConfigBuilder()` or `Config()` widget class. Example of usage
 
-This is the most automatic solution, where implementation and access to settings is provided by a helper static configurator class that only collects the necessary configurations, initializes them and detects the target platform.
+This is the most automatic solution, where implementation and access to settings.
 
 To do this, it is enough to create a class that based on ConfigModel:
 
@@ -418,6 +513,13 @@ class MyConfig extends ConfigModel {
 
   @override
   List<Scenario<Enum>>? get scenarios => throw UnimplementedError();
+
+  @override
+  List<ISettingsStorage>? get scenarioStorages => UnimplementedError();
+
+  @override
+  List<ISettingsStorage>? get settingsStorages => UnimplementedError();
+  ...
 }
 ```
 
@@ -437,6 +539,12 @@ class MyConfig extends ConfigModel {
 
   @override
   List<Scenario<Enum>>? get scenarios => null;
+
+    @override
+  List<ISettingsStorage>? get scenarioStorages => null;
+
+  @override
+  List<ISettingsStorage>? get settingsStorages => null;
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -498,78 +606,54 @@ class MyConfig2 extends ConfigModel {
 
 To implement the configuration, you can use one of the following widgets:
 
-1. ConfigProvider
+1. Config
 2. ConfigBuilder
 
-The `ConfigProvider` - only allows you to inject configuration into the widget tree. The `ConfigBuilder` also allows you to build the required UI based on the target platform.
+The `Config` - only allows you to inject configuration into the widget tree. The `ConfigBuilder` also allows you to build the required UI based on the target platform.
 
-1. ConfigProvider:
-
-```dart
-var config = GeneralConfig();
-var webConfig = WebConfig();
-config.init();
-webConfig.init();
-
-runApp(ConfigProvider(
-  configs: [config, webConfig],
-  child: const ConfigApp(),
-));
-```
-
-2. ConfigBuilder:
+1. Config:
 
 ```dart
-var config = GeneralConfig();
+var generalConfig = GeneralConfig();
 var webConfig = WebConfig();
-config.init();
-webConfig.init();
+
+await generalConfig.init();
+await webConfig.init();
 
 runApp(
-    ConfigBuilder(
-      builder: (context, platform) {
-        if (platform == ConfigPlatform.web) {
-          return const ConfigAppForWeb();
-        } else {
-          return const ConfigApp();
-        }
-      },
-      configs: [config, webConfig],
+    Config(
+      providers: [
+        SettingsProvider(
+          model: generalConfig,
+        ),
+        SettingsProvider(
+          model: webConfig,
+        )
+      ],
+      child: ConfigAppForWeb(),
     ),
   );
 ```
 
-Passing the `config` parameter for `ConfigProvider` or `ConfigBuilder` widgets is optional. An even more convenient way would be to use the helper class Config. It can be used to access configurations outside of widgets and to conveniently implement configurations into the widget tree.
-
-To implement the configuration in the widget tree, you need to register them. You can register all your configurations, and Config initializes only those required for the target platform:
-
-1. ConfigProvider:
-
-```dart
-Config.registerAll([
-  GeneralConfig(),
-  WebConfig(),
-  ]);
-
-Config.init();
-
-runApp(ConfigProvider(
-  child: const ConfigApp(),
-));
-```
-
 2. ConfigBuilder:
 
 ```dart
-Config.registerAll([
-  GeneralConfig(),
-  WebConfig(),
-  ]);
+var generalConfig = GeneralConfig();
+var webConfig = WebConfig();
 
-Config.init();
+await generalConfig.init();
+await webConfig.init();
 
 runApp(
     ConfigBuilder(
+      providers: [
+        SettingsProvider(
+          model: generalConfig,
+        ),
+        SettingsProvider(
+          model: webConfig,
+        )
+      ],
       builder: (context, platform) {
         if (platform == ConfigPlatform.web) {
           return const ConfigAppForWeb();
