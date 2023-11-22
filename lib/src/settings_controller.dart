@@ -1,7 +1,6 @@
 import 'dart:collection';
 
-import 'package:settings_provider/src/helpers/exceptions.dart';
-
+import 'helpers/exceptions.dart';
 import 'helpers/settings_controller_interface.dart';
 import 'settings_property.dart';
 import 'storage/multi_storage.dart';
@@ -27,8 +26,12 @@ class SettingsController implements ISettingsController {
     bool isDebug = false,
     List<ISettingsStorage>? storages,
   }) {
-    SettingsController controller = SettingsController._(properties,
-        prefix: prefix, isDebug: isDebug, storages: storages);
+    SettingsController controller = SettingsController._(
+      properties,
+      prefix: prefix,
+      isDebug: isDebug,
+      storages: storages,
+    );
     controller._init();
 
     return controller;
@@ -41,8 +44,12 @@ class SettingsController implements ISettingsController {
     bool isDebug = false,
     List<ISettingsStorage>? storages,
   }) {
-    SettingsController controller = SettingsController._(properties,
-        prefix: prefix, isDebug: isDebug, storages: storages);
+    SettingsController controller = SettingsController._(
+      properties,
+      prefix: prefix,
+      isDebug: isDebug,
+      storages: storages,
+    );
     return controller;
   }
 
@@ -58,8 +65,12 @@ class SettingsController implements ISettingsController {
     bool isDebug = false,
     List<ISettingsStorage>? storages,
   }) async {
-    SettingsController controller = SettingsController._(properties,
-        prefix: prefix, isDebug: isDebug, storages: storages);
+    SettingsController controller = SettingsController._(
+      properties,
+      prefix: prefix,
+      isDebug: isDebug,
+      storages: storages,
+    );
     await controller._init();
     return controller;
   }

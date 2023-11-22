@@ -1,9 +1,7 @@
-import 'package:example/multi_main.dart';
-import 'package:example/src/multi_settings_app/personal_screen.dart';
-import 'package:example/src/multi_settings_app/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
+import 'settings.dart';
 import 'settings_screen.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,10 +15,20 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+//  late final int _scaler;
+
+  @override
+  void initState() {
+    super.initState();
+/*     _scaler =
+        Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
+    print("currentScaler: $_scaler"); */
+  }
 
   void _incrementCounter() {
     setState(() {
-      _counter += Settings.of<HomeScreenSettings>(context).get(counterScaler);
+      _counter +=
+          Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
     });
   }
 
@@ -31,12 +39,6 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
-          IconButton(
-              onPressed: () async => await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PersonalScreen())),
-              icon: const Icon(Icons.person)),
           IconButton(
               onPressed: () async => await Navigator.push(
                     context,

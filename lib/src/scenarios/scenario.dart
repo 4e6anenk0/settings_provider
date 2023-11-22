@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:settings_provider/settings_provider.dart';
+
+import '../../settings_provider.dart';
 
 /// A class for building settings associated with Enum values.
 ///
@@ -11,14 +12,10 @@ import 'package:settings_provider/settings_provider.dart';
 /// easily created.
 class Scenario<T extends Enum> extends Property<T> {
   Scenario(
-      {required this.actions,
-      this.scenario,
-      required super.defaultValue,
-      super.isLocalStored})
+      {required this.actions, required super.defaultValue, super.isLocalStored})
       : super(id: defaultValue.runtimeType.toString());
 
   final List<T> actions;
-  final Function(BuildContext context, T action)? scenario;
 
   @override
   Scenario<T> copyWith(
@@ -29,7 +26,6 @@ class Scenario<T extends Enum> extends Property<T> {
       bool? isLocalStored}) {
     return Scenario(
       actions: actions ?? this.actions,
-      scenario: scenario ?? this.scenario,
       defaultValue: defaultValue ?? this.defaultValue,
       isLocalStored: isLocalStored ?? this.isLocalStored,
     );

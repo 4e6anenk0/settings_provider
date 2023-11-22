@@ -5,16 +5,27 @@ import '../helpers/settings_controller_interface.dart';
 ///
 /// Implements an extension over the base `SettingsController` class for `Property`.
 class ScenarioController implements ISettingsController {
-  ScenarioController._(this.scenarios, this._prefix);
+  ScenarioController._(this.scenarios, this._prefix, this._storages)
+      : assert(scenarios.isNotEmpty,
+            "The list is passed, but it doesn't have any scenario");
 
-  static Future<ScenarioController> init(
-      {List<Scenario>? scenarios, String? prefix}) async {
-    ScenarioController controller = ScenarioController._(scenarios, prefix);
+  static Future<ScenarioController> init({
+    required List<Scenario> scenarios,
+    String? prefix,
+    List<ISettingsStorage>? storages,
+  }) async {
+    ScenarioController controller = ScenarioController._(
+      scenarios,
+      prefix,
+      storages,
+    );
     await controller._init();
     return controller;
   }
 
-  late final List<Scenario>? scenarios;
+  /// List of all repositories to save settings.
+  final List<ISettingsStorage>? _storages;
+  late final List<Scenario> scenarios;
   final String? _prefix;
   final Map<Enum, String> _mapEnumToString = {};
   final Map<String, Enum> _mapStringToEnum = {};
@@ -22,11 +33,11 @@ class ScenarioController implements ISettingsController {
   late final SettingsController _settingsController;
 
   Future<void> _init() async {
-    if (scenarios != null) {
-      _prepareConvertedScenarios(scenarios!);
-      _settingsController = await SettingsController.consist(
-          properties: _convertedScenarios, prefix: _prefix ?? '.Scenarios');
-    }
+    _prepareConvertedScenarios(scenarios);
+    _settingsController = await SettingsController.consist(
+        properties: _convertedScenarios,
+        prefix: _prefix ?? '.Scenarios',
+        storages: _storages);
   }
 
   /// A method that processes a list of scenarios and creates a mapping and a

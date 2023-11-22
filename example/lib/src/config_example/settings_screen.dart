@@ -1,6 +1,7 @@
-import 'package:example/src/simple_app/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
+
+import 'settings.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -40,7 +41,9 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text = context.setting().get(counterScaler).toString();
+    _scaler =
+        Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
+    _textController.text = _scaler.toString();
   }
 
   @override
@@ -67,11 +70,12 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  context
-                      .setting()
-                      .update(counterScaler.copyWith(defaultValue: _scaler));
+                  Config.of<GeneralConfig>(context).update(GeneralConfig
+                      .counterScaler
+                      .copyWith(defaultValue: _scaler));
                 } else {
-                  context.setting().update(counterScaler);
+                  Config.of<GeneralConfig>(context)
+                      .update(GeneralConfig.counterScaler);
                 }
               },
               onChanged: (value) async {
@@ -87,9 +91,8 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                value = context
-                                    .setting()
-                                    .get(counterScaler)
+                                value = Config.of<GeneralConfig>(context)
+                                    .get(GeneralConfig.counterScaler)
                                     .toString();
                                 Navigator.pop(context);
                               },
@@ -99,7 +102,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                     },
                   );
                 } else if (value == '') {
-                  _scaler = 0;
+                  _scaler = 1;
                 }
               }),
         ),
@@ -127,13 +130,15 @@ class DarkModeSetting extends StatelessWidget {
         ),
         Switch(
           // switch use the getSetting() method to get the value
-          value: context.listenSetting().get(isDarkMode),
+          value: Config.of<GeneralConfig>(context, listen: true)
+              .get(GeneralConfig.isDarkMode),
           onChanged: (newValue) {
-            if (newValue != context.setting().get(isDarkMode)) {
+            if (newValue !=
+                Config.of<GeneralConfig>(context)
+                    .get(GeneralConfig.isDarkMode)) {
               // if newValue is different we can update our settings
-              context
-                  .setting()
-                  .update(isDarkMode.copyWith(defaultValue: newValue));
+              Config.of<GeneralConfig>(context).update(
+                  GeneralConfig.isDarkMode.copyWith(defaultValue: newValue));
             }
           },
         ),
