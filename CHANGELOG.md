@@ -17,3 +17,10 @@
 ## 0.1.1
 
 * some fixes in docs and code
+
+## 0.2.0
+
+* Added new feature for creating configurations depending on the platform;
+* Improved interface of context extensions;
+* Generalized interface for configurations and settings separately;
+* Some improvements.
