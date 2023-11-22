@@ -18,16 +18,15 @@ A library for providing declarative configuration of app settings.
 - Use `Config` and `ConfigBuilder` to group settings by platform.
 
 <div style="justify-content: center; display: flex; align-items: center;">
-<div style="width: 200">
+
   <a href="https://pub.dev/packages/settings_provider">
-      <img src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
+      <img width="200" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
   </a>
-</div>
-<div style="width: 200">
+
   <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
+    <img width="200" src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
   </a>
-</div>
+
 </div>
 
 ## Quick start. Example
