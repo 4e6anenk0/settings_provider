@@ -15,6 +15,20 @@ A library for providing declarative configuration of app settings.
 - Ability to divide settings into groups via `MultiSettings`. This allows you to have a separate subscription to the relevant set of settings, which can be useful for performance and convenience in large projects;
 - Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI.
 - Automatic detection of the platform and implementation of settings depending on this platform.
+- Use `Config` and `ConfigBuilder` to group settings by platform.
+
+<div style="justify-content: center; display: flex; align-items: center;">
+<div style="width: 200px">
+  <a href="https://pub.dev/packages/settings_provider">
+      <img src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
+  </a>
+</div>
+<div style="width: 200px">
+  <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
+  </a>
+</div>
+</div>
 
 ## Quick start. Example
 
@@ -162,12 +176,6 @@ context.config().update(property);
 // or 
 Config.of(context).update(property);
 ```
-
-<p align="center">
-  <a href="https://pub.dev/packages/settings_provider">
-    <img width=250 src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
-  </a>
-</p>
 
 ## Getting started
 
