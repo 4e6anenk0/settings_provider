@@ -17,25 +17,14 @@ A library for providing declarative configuration of app settings.
 - Automatic detection of the platform and implementation of settings depending on this platform.
 - Use `Config` and `ConfigBuilder` to group settings by platform.
 
-<style>
-  .container {
-    display: table;
-    width: 100%;
-  }
+<div align="center">
 
-  .inner-container {
-    float: left;
-  }
-</style>
-
-<div class="container">
-
-<div class="inner-container">
+<div>
   <a href="https://pub.dev/packages/settings_provider">
       <img width="200" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
   </a>
 </div>
-<div class="inner-container">
+<div>
   <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
     <img width="200" src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
   </a>
