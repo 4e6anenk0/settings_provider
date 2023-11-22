@@ -28,7 +28,7 @@ A library for providing declarative configuration of app settings.
   <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
     <img width="200" src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
   </a>
-<div>
+</div>
 </div>
 
 ## Quick start. Example
