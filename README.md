@@ -21,7 +21,7 @@ A library for providing declarative configuration of app settings.
 
 <div>
   <a href="https://pub.dev/packages/settings_provider">
-      <img width="200" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
+      <img width="235" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
   </a>
 </div>
 <div>
