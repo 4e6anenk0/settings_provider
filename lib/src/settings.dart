@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 
 import 'helpers/settings_controller_interface.dart';
+import 'helpers/storage_interface.dart';
 import 'scenarios/scenario.dart';
 import 'scenarios/scenario_controller.dart';
 import 'settings_controller.dart';
@@ -29,19 +30,17 @@ import 'settings_property.dart';
 ///  );
 ///}
 /// ```
-class Settings extends StatefulWidget {
-  const Settings(
-      {super.key,
-      required this.settingsController,
-      this.scenarioController,
-      required this.child});
+class Settings<T extends BaseSettingsModel> extends StatefulWidget {
+  const Settings({super.key, required this.model, required this.child});
 
   final Widget child;
 
   /// A controller is required to manage settings
-  final SettingsController settingsController;
+/*   final SettingsController settingsController;
 
-  final ScenarioController? scenarioController;
+  final ScenarioController? scenarioController; */
+
+  final T model;
 
   /// The static `of()` method allows you to look up the implemented SettingsNotifier
   /// that stores the controller to interact with settings.
@@ -49,7 +48,9 @@ class Settings extends StatefulWidget {
   /// The `listen = true` option allows you to subscribe to changes in settings.
   /// But we should use the method with this parameter only in the context of the widget tree
   /// or in the `didChangeDependencies()` method.
-  static T of<T extends SettingsModel>(BuildContext context,
+  @Deprecated(
+      'This method was split into two separate methods. For listening: `listenFrom()`, and for unsubscribed access `from()`.')
+  static T of<T extends BaseSettingsModel>(BuildContext context,
       {bool listen = false}) {
     if (listen == true) {
       SettingsNotifier<T>? provider =
@@ -68,26 +69,43 @@ class Settings extends StatefulWidget {
     }
   }
 
-  @override
-  State<Settings> createState() => _ConfigState();
-}
+  /// The static `listenFrom()` method allows you to look up the implemented SettingsNotifier
+  /// that stores the controller to interact with settings.
+  ///
+  /// This method allows you to subscribe to changes in settings.
+  /// But we should use the method with this parameter only in the context of the widget tree
+  /// or in the `didChangeDependencies()` method.
+  static T listenFrom<T extends BaseSettingsModel>(BuildContext context) {
+    SettingsNotifier<T>? provider =
+        context.dependOnInheritedWidgetOfExactType<SettingsNotifier<T>>();
+    if (provider == null && null is! T) {
+      throw Exception('Not founded provided Settings');
+    }
+    return provider?.notifier as T;
+  }
 
-class _ConfigState extends State<Settings> {
-  late final SettingsModel model = SettingsModel(
-    settingsController: widget.settingsController,
-    scenarioController: widget.scenarioController,
-  );
-
-  @override
-  void dispose() {
-    model.dispose();
-    super.dispose();
+  /// The static `from()` method allows you to look up the implemented SettingsNotifier
+  /// that stores the controller to interact with settings.
+  ///
+  /// This method allows you to get setting from settings.
+  static T from<T extends BaseSettingsModel>(BuildContext context) {
+    SettingsNotifier<T>? provider =
+        context.getInheritedWidgetOfExactType<SettingsNotifier<T>>();
+    if (provider == null && null is! T) {
+      throw Exception('Not founded provided Settings');
+    }
+    return provider?.notifier as T;
   }
 
   @override
+  State<Settings<T>> createState() => _ConfigState<T>();
+}
+
+class _ConfigState<T extends BaseSettingsModel> extends State<Settings<T>> {
+  @override
   Widget build(BuildContext context) {
     return SettingsNotifier(
-      notifier: model,
+      notifier: widget.model,
       child: widget.child,
     );
   }
@@ -107,19 +125,43 @@ class SettingsNotifier<T extends BaseSettingsModel>
 /// This class is just a wrapper over `SettingsController` and implements the
 /// same interface as `SettingsController` to manage the controller calls
 /// and notify listeners via `ChangeNotifier`
-class SettingsModel extends BaseSettingsModel {
-  SettingsModel({required settingsController, scenarioController})
-      : _settingsController = settingsController,
-        _scenarioController = scenarioController;
+abstract class SettingsModel extends BaseSettingsModel {
+  List<Property> get properties;
+  List<Scenario>? get scenarios;
+  List<ISettingsStorage>? get settingsStorages => null;
+  List<ISettingsStorage>? get scenarioStorages => null;
+  String get id => runtimeType.toString();
 
-  final SettingsController _settingsController;
-  final ScenarioController? _scenarioController;
+  late final SettingsController _settingsController;
+  late final ScenarioController? _scenarioController;
 
   @override
   ScenarioController? get scenarioController => _scenarioController;
 
   @override
   SettingsController get settingsController => _settingsController;
+
+  bool _isInited = false;
+  bool get isInited => _isInited;
+
+  Future<bool> init() async {
+    try {
+      _settingsController = await SettingsController.consist(
+          properties: properties, prefix: id, storages: settingsStorages);
+      if (scenarios != null) {
+        _scenarioController = await ScenarioController.init(
+            scenarios: scenarios!,
+            prefix: '$id.Scenario.',
+            storages: scenarioStorages);
+      } else {
+        _scenarioController = null;
+      }
+      _isInited = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   T get<T>(Property<T> property) {

@@ -8,13 +8,15 @@ void main() async {
   // the binding on which Flutter depends must be done as a matter of priority
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Now we can create a consistent constructor asynchronously
-  SettingsController controller =
-      await SettingsController.consist(properties: settings, isDebug: false);
+  var generalSettings = GeneralSettings();
+
+  await generalSettings.init();
+
+  //await generalSettings.init();
 
   runApp(
     Settings(
-      settingsController: controller,
+      model: generalSettings,
       child: const SimpleApp(),
     ),
   );

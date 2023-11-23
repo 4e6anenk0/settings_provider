@@ -14,9 +14,9 @@ abstract class ConfigModel extends BaseSettingsModel {
   List<Property> get properties;
   List<Scenario>? get scenarios;
   List<ConfigPlatform> get platforms;
-  List<ISettingsStorage>? get settingsStorages;
-  List<ISettingsStorage>? get scenarioStorages;
-  String get id;
+  List<ISettingsStorage>? get settingsStorages => null;
+  List<ISettingsStorage>? get scenarioStorages => null;
+  String get id => runtimeType.toString();
 
   late final SettingsController _settingsController;
   late final ScenarioController? _scenarioController;
@@ -49,6 +49,8 @@ abstract class ConfigModel extends BaseSettingsModel {
               scenarios: scenarios!,
               prefix: '$id.Scenario.',
               storages: scenarioStorages);
+        } else {
+          _scenarioController = null;
         }
         _isInited = true;
         return true;

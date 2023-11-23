@@ -11,11 +11,24 @@ A library for providing declarative configuration of app settings.
 - Description of configuration settings using declarative properties;
 - It is convenient to separate settings from the project;
 - Handy methods and helper functions to manage settings;
-- Ability to react UI to changes in settings and receive settings from the context with InhertitedNotifier;
-- Ability to divide settings into groups via `MultiSettings`. This allows you to have a separate subscription to the relevant set of settings, which can be useful for performance and convenience in large projects;
-- Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI.
-- Automatic detection of the platform and implementation of settings depending on this platform.
-- Use `Config` and `ConfigBuilder` to group settings by platform.
+- Ability to react UI to changes in settings and receive settings from the context;
+- Use the `Setting` widget to easily provide settings in your project.
+- Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI;
+- Use `Config` and `ConfigBuilder` to group settings by platform and use the groups of settings depending on the platform.
+
+If you need the simplest implementation, read about the `Settings` widget:
+
+- [More about Settings widget ...](https://github.com/4e6anenk0/settings_provider#1-the-settings-widget-class-example-of-the-simplest-usage)
+
+If you want the most flexible and powerful solution, see about `Config` and `ConfigBuilder`:
+
+- [More about Config and ConfigBuilder widgets ...](https://github.com/4e6anenk0/settings_provider#4-the-configmodel-property-class-with-configbuilder-or-config-widget-class-example-of-usage)
+
+If you need to store the Enum locally and the last value to build the appropriate UI, then see more about the Scenario property:
+
+- [More about Scenario property ...](https://github.com/4e6anenk0/settings_provider#3-the-scenario-property-class-with-scenariobuilder-widget-class-example-of-usage)
+
+Also visit pub.dev:
 
 <div align="center">
 
@@ -24,72 +37,77 @@ A library for providing declarative configuration of app settings.
       <img width="235" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
   </a>
 </div>
-<div>
-  <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
-    <img width="200" src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
-  </a>
-</div>
 </div>
 
 ## Quick start. Example
 
-### Simple usage
+### Simple usage with SettingsModel
 
-settings.dart:
+1) settings.dart:
 
 ```dart
-SettingsController controller =
-      await SettingsController.consist(properties: settings);
+class GeneralSettings extends SettingsModel {
+  @override
+  List<Property> get properties => [isDarkMode, counterScaler];
+
+  @override
+  List<Scenario<Enum>>? get scenarios => null;
+
+  static const Property<bool> isDarkMode = Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: true,
+  );
+
+  static const Property<int> counterScaler =
+      Property(defaultValue: 1, id: 'counterScaler', isLocalStored: true);
+}
 ```
 
-main.dart:
+2) main.dart:
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SettingsController controller =
-      await SettingsController.consist(properties: settings);
+  var generalSettings = GeneralSettings();
+
+  await generalSettings.init();
 
   runApp(
     Settings(
-      settingsController: controller,
+      model: generalSettings,
       child: const SimpleApp(),
     ),
   );
 }
 ```
 
-access to the settings:
+2) access to the settings:
 
 ```dart
 // get setting without subscription
-context.setting().get(property);
+context.setting<GeneralSettings>().get(property);
 // or
-Settings.of(context).get(property);
+Settings.from<GeneralSettings>(context).get(property);
 
 // get setting with subscription
-context.listenSetting().get(property);
+context.listenSetting<GeneralSettings>().get(property);
 // or
-Settings.of(context, listen: true).get(property);
+Settings.listenFrom<GeneralSettings>(context).get(property);
 
 // update setting
-context.setting().update(property);
+context.setting<GeneralSettings>().update(property);
 // or 
-Settings.of(context).update(property);
+Settings.from<GeneralSettings>(context).update(property);
 ```
 
-### More functionality usage
+### More functionality usage with ConfigModel
 
-settings.dart:
+1) settings.dart:
 
 ```dart
-import 'package:settings_provider/settings_provider.dart';
-
 class GeneralConfig extends ConfigModel {
-  @override
-  String get id => 'General';
-
   @override
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
@@ -99,19 +117,19 @@ class GeneralConfig extends ConfigModel {
   @override
   List<Scenario<Enum>>? get scenarios => null;
 
-  static Property<bool> isDarkMode = const Property(
+  static const Property<bool> isDarkMode = Property(
     defaultValue: false,
     id: 'isDarkMode',
     isLocalStored: true,
   );
 
-  static Property<int> counterScaler = const Property(
+  static const Property<int> counterScaler = Property(
     defaultValue: 1,
     id: 'counterScaler',
     isLocalStored: false,
   );
 
-  static Property<String> name = const Property(
+  static const Property<String> name = Property(
     defaultValue: "Jonh",
     id: 'name',
     isLocalStored: false,
@@ -119,7 +137,7 @@ class GeneralConfig extends ConfigModel {
 }
 ```
 
-main.dart:
+2) main.dart:
 
 ```dart
 void main() async {
@@ -140,43 +158,38 @@ void main() async {
 }
 ```
 
-access to the settings:
+3) access to the settings:
 
 ```dart
 // get setting without subscription
-context.config().get(property);
+context.setting<GeneralConfig>().get(property);
 // or
-Config.of(context).get(property);
+Config.from<GeneralConfig>(context).get(property);
 
 // get setting with subscription
-context.listenConfig().get(property);
+context.listenSetting<GeneralConfig>().get(property);
 // or
-Config.of(context, listen: true).get(property);
+Config.listenFrom<GeneralConfig>(context).get(property);
 
 // update config
-context.config().update(property);
+context.setting<GeneralConfig>().update(property);
 // or 
-Config.of(context).update(property);
+Config.from<GeneralConfig>(context).update(property);
 ```
 
-Access settings if you have more than 1 cofig:
+<div align="center">
 
-```dart
-// get setting without subscription
-context.config<GeneralConfig>().get(property);
-// or
-Config.of<GeneralConfig>(context).get(property);
-
-// get setting with subscription
-context.listenConfig<GeneralConfig>().get(property);
-// or
-Config.of<GeneralConfig>(context, listen: true).get(property);
-
-// update config
-context.config().update(property);
-// or 
-Config.of(context).update(property);
-```
+<div>
+  <a href="https://pub.dev/packages/settings_provider">
+      <img width="235" src="https://github.com/4e6anenk0/settings_provider/blob/main/img/pubdev.png?raw=true" alt="Logo">
+  </a>
+</div>
+<div>
+  <a href="https://www.buymeacoffee.com/yppppl" target="_blank">
+    <img width="200" src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee ❤️">
+  </a>
+</div>
+</div>
 
 ## Getting started
 
@@ -184,7 +197,7 @@ The `settings_provider` library implements several concepts that are familiar to
 
 The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
 
-All interaction with the settings happens through the `SettingsController`.
+All interaction with the settings happens through the `SettingsController`. All interaction with the scenarios happens through the `ScenarioController`.
 
 ## Usage
 
@@ -216,29 +229,27 @@ const counterScaler = Property(
 
 In order to use the package in your project, you need to wrap the application creation function in `Settings()` widget at the top level. This will allow you to get the configuration before the application UI starts rendering. This is necessary for consistent creation of the app, so that the configuration of the session matches the data of the local storage.
 
-The `Settings()` widget is responsible for implementing settings in the widget tree. To implement settings, you need to create a controller asynchronously using the `consit()` static function and pass a list of properties as a parameter:
-
-Example how to create controller. The `properties` parameter is `List<Property>`:
+The `Settings()` widget is responsible for implementing settings in the widget tree. To implement settings, you need to create a class based on `SettingsModel` and initialize this class asynchronously using the `init()` method:
 
 ```dart
-SettingsController controller =
-      await SettingsController.consist(properties: settings);
+var generalSettings = GeneralSettings();
+
+await generalSettings.init();
 ```
 
 Main function example:
 
 ```dart
 void main() async {
-  // the binding on which Flutter depends must be done as a matter of priority
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Now we can create a consistent constructor asynchronously
-  SettingsController controller =
-      await SettingsController.consist(properties: settings);
+  var generalSettings = GeneralSettings();
+
+  await generalSettings.init();
 
   runApp(
     Settings(
-      settingsController: controller,
+      model: generalSettings,
       child: const SimpleApp(),
     ),
   );
@@ -249,10 +260,16 @@ void main() async {
 
 Once the settings have been implemented, you can refer to them to get them or update the values.
 
-To do this, you need to refer to the static function `of()`, which is available in the Settings class, and find the desired method to pass the property:
+To do this, you need to refer to the static function `from<T>()` or `listenFrom<T>()`, which is available in the Settings class, and find the desired method to pass the property. You must specify the type of model you created previously, otherwise you will not be able to find your settings:
 
 ```dart
-Settings.of(context).get(property);
+Settings.from<T>(context).get(property);
+```
+
+or:
+
+```dart
+Settings.listenFrom<T>(context).get(property);
 ```
 
 A logical question arises... Do you need to create a new property with similar settings every time when you make a change to the settings? **Yes, but you don't have to do it yourself ever.**
@@ -260,7 +277,7 @@ A logical question arises... Do you need to create a new property with similar s
 If you want to make a change in your settings, you need to use the `copyWith()` method, which is well known to Flutter developers. For example, look how simple it is:
 
 ```dart
-Settings.of(context).update(property.copyWith(defaultValue: newValue));
+Settings.from(context).update(property.copyWith(defaultValue: newValue));
 ```
 
 Here are the methods available to you for working with the settings:
@@ -294,25 +311,25 @@ For convenience, the library implements helpers functions for accessing settings
 Example:
 
 ```dart
-context.setting().get(property);
+context.setting<T>().get(property);
 ```
 
 Instead:
 
 ```dart
-Settings.of(context).get(property);
+Settings.from<T>(context).get(property);
 ```
 
 Or:
 
 ```dart
-context.listenSetting(property);
+context.listenSetting<T>().get(property);
 ```
 
 Instead:
 
 ```dart
-Settings.of(context, listen = true).get(property);
+Settings.listenFrom(context).get(property);
 ```
 
 Choose what is more convenient for you.
@@ -326,81 +343,75 @@ The library also provides the ability to create separate groups of settings. The
 First configuration:
 
 ```dart
-const isDarkMode = Property<bool>(
-  defaultValue: false,
-  id: 'isDarkMode',
-  isLocalStored: true,
-);
+class FirstSettings extends SettingsModel {
+  @override
+  List<Property> get properties => [isDarkMode, counterScaler];
 
-const counterScaler = Property<int>(defaultValue: 1, id: 'counterScaler');
+  @override
+  List<Scenario<Enum>>? get scenarios => null;
 
-List<Property> firstSettingsConfig = [isDarkMode, counterScaler];
+  static const Property<bool> isDarkMode = Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: true,
+  );
+
+  static const Property<int> counterScaler =
+      Property(defaultValue: 1, id: 'counterScaler');
+}
 ```
 
 Second configuration:
 
 ```dart
-const name = Property<String>(defaultValue: 'John', id: 'name');
+class SecondSettings extends SettingsModel {
+  @override
+  List<Property> get properties => [name];
 
-List<Property> secondSettigsConfig = [name];
-```
+  @override
+  List<Scenario<Enum>>? get scenarios => null;
 
-2.2. Let's create models for our property groups (to find them in the tree):
-
-```dart
-// A separate model for First screen settings
-class FirstScreenSettings extends SettingsModel {
-  FirstScreenSettings(super.controller);
-}
-
-// A separate model for Second screen settings
-class SecondScreenSettings extends SettingsModel {
-  SecondScreenSettings(super.controller);
+  static const Property<String> name =
+      Property(defaultValue: 'John', id: 'name');
 }
 ```
 
-2.3. Let's create separate controllers with their own properties and uniq prefixes:
+2.2. Let's create models for our property groups (to locate them in the tree) and initialize them:
 
 ```dart
-SettingsController firstScreenController = await SettingsController.consist(
-  properties: firstSettingsConfig, 
-  prefix: "FirstPrefix."
-);
-  
-SettingsController secondlScreenController = await SettingsController.consist(
-  properties: secondSettigsConfig, 
-  prefix: "SecondPrefix."
-);
+var firstSettings = FirstSettings();
+var secondSettings = SecondSettings();
+
+await firstSettings.init();
+await secondSettings.init()
 ```
 
-2.4. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
+2.3. Let's implement settings through MultiSettings() and a special class for nested settings SettingsProvider():
 
 ```dart
 runApp(
-    // Instead of Settings, we use MultiSettings
     MultiSettings(
       providers: [
-        SettingsProvider(model: FirstScreenSettings(firstScreenController)),
-        SettingsProvider(
-            model: SecondlScreenSettings(secondScreenController)),
+        SettingsProvider(model: firstSettings),
+        SettingsProvider(model: secondSettings),
       ],
-      child: const App(),
+      child: const MultiSettingsApp(),
     ),
   );
 ```
 
-2.5 Access to settings in MultiSettings
+2.4 Access to settings in MultiSettings
 
 ```dart
-Settings.of<FirstScreenSettings>(context).get(counterScaler);
+Settings.from<FirstSettings>(context).get(counterScaler);
 
-Settings.of<SecondScreenSettings>(context).get(name);
+Settings.from<SecondSettings>(context).get(name);
 
 // or
 
-context.setting<FirstScreenSettings>().get(counterScaler);
+context.setting<FirstSettings>().get(counterScaler);
 
-context.setting<SecondScreenSettings>().get(name);
+context.setting<SecondSettings>().get(name);
 ```
 
 ### 3. The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
@@ -412,7 +423,7 @@ The Scenario() class is inherited from the Property() class. So, it can be consi
 Let's create scenario property:
 
 ```dart
-var themeMode =
+Scenario<ThemeMode> themeMode =
     Scenario(
       actions: ThemeMode.values, 
       defaultValue: ThemeMode.dark
@@ -423,13 +434,21 @@ In our example, we use the standard Enum from the Flutter library known as the `
 
 As you can see, scenarios are very similar to properties. Unlike Property(), we should pass the parameter `actions`, which is of type `List<Enum>`. To get a list of enums you should call `Enum.values`. But the id parameter shouldn't be passed.
 
-#### 3.2. The `ScenarioController()` class
-
-Now we can create a scenario controller:
+#### 3.2. Create a class based on SettingsModel with scenarios
 
 ```dart
-ScenarioController scenarioController =
-      await ScenarioController.init(scenarios: [themeMode]);
+class GeneralSettings extends SettingsModel {
+  
+  ...
+
+  @override
+  List<Scenario<Enum>>? get scenarios => [themeMode];
+
+  ...
+
+  static Scenario<ThemeMode> themeMode =
+      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+}
 ```
 
 The general main() function would look like this:
@@ -438,16 +457,13 @@ The general main() function would look like this:
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SettingsController controller =
-      await SettingsController.consist(properties: settings);
+  var generalSettings = GeneralSettings();
 
-  ScenarioController scenarioController =
-      await ScenarioController.init(scenarios: [themeMode]);
+  await generalSettings.init();
 
   runApp(
     Settings(
-      settingsController: controller,
-      scenarioController: scenarioController,
+      model: generalSettings,
       child: const ScenarioApp(),
     ),
   );
@@ -462,7 +478,7 @@ class ScenarioApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScenarioBuilder(
+    return ScenarioBuilder<ThemeMode, GeneralSettings>(
       builder: (context, action) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -474,16 +490,16 @@ class ScenarioApp extends StatelessWidget {
           home: const MyHomePage(title: 'Setting Scenario Example'),
         );
       },
-      scenario: themeMode,
+      scenario: GeneralSettings.themeMode,
     );
   }
 }
 ```
 
-Consider `ScenarioBuilder()` individually:
+Consider `ScenarioBuilder<T, P>()` individually:
 
 ```dart
-ScenarioBuilder(
+ScenarioBuilder<ThemeMode, GeneralSettings>(
       builder: (context, action) {
         return MaterialApp(
           ...
@@ -491,7 +507,7 @@ ScenarioBuilder(
           ...
         );
       },
-      scenario: themeMode,
+      scenario: GeneralSettings.themeMode,
     );
 ```
 
@@ -517,8 +533,6 @@ You will need to implement get methods to obtain the necessary configuration dat
 
 ```dart
 class MyConfig extends ConfigModel {
-  @override
-  String get id => throw UnimplementedError();
 
   @override
   List<ConfigPlatform> get platforms => throw UnimplementedError();
@@ -529,11 +543,6 @@ class MyConfig extends ConfigModel {
   @override
   List<Scenario<Enum>>? get scenarios => throw UnimplementedError();
 
-  @override
-  List<ISettingsStorage>? get scenarioStorages => UnimplementedError();
-
-  @override
-  List<ISettingsStorage>? get settingsStorages => UnimplementedError();
   ...
 }
 ```
@@ -542,9 +551,6 @@ Also, for convenience, you can add properties inside this class, making the fiel
 
 ```dart
 class MyConfig extends ConfigModel {
-  
-  @override
-  String get id => 'MyConfig';
 
   @override
   List<ConfigPlatform> get platforms => [ConfigsPlatform.general];
@@ -555,11 +561,7 @@ class MyConfig extends ConfigModel {
   @override
   List<Scenario<Enum>>? get scenarios => null;
 
-    @override
-  List<ISettingsStorage>? get scenarioStorages => null;
-
-  @override
-  List<ISettingsStorage>? get settingsStorages => null;
+  ...
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -594,9 +596,6 @@ class MyConfig1 extends ConfigModel {
 
   ...
 
-  @override
-  String get id => 'MyConfig1';
-
   static Property<String> name = const Property(
     defaultValue: "John",
     id: 'name',
@@ -608,9 +607,6 @@ class MyConfig2 extends ConfigModel {
 
   ...
 
-  @override
-  String get id => 'MyConfig2';
-
   static Property<String> name = const Property(
     defaultValue: "Test user",
     id: 'name',
@@ -619,12 +615,19 @@ class MyConfig2 extends ConfigModel {
 }
 ```
 
+And to have access to the necessary settings as follows:
+
+```dart
+MyConfig1.name;
+MyConfig2.name;
+```
+
 To implement the configuration, you can use one of the following widgets:
 
 1. Config
 2. ConfigBuilder
 
-The `Config` - only allows you to inject configuration into the widget tree. The `ConfigBuilder` also allows you to build the required UI based on the target platform.
+The `Config` - only allows you to inject configuration into the widget tree. The `ConfigBuilder` allows you to build the required UI based on the target platform.
 
 1. Config:
 

@@ -2,7 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../../settings_provider.dart';
 
-class ScenarioBuilder<T extends Enum> extends StatefulWidget {
+class ScenarioBuilder<T extends Enum, P extends BaseSettingsModel>
+    extends StatefulWidget {
   const ScenarioBuilder({
     required this.builder,
     required this.scenario,
@@ -14,10 +15,11 @@ class ScenarioBuilder<T extends Enum> extends StatefulWidget {
   final Scenario<T> scenario;
 
   @override
-  State<ScenarioBuilder> createState() => _ScenarioBuilderState<T>();
+  State<ScenarioBuilder> createState() => _ScenarioBuilderState<T, P>();
 }
 
-class _ScenarioBuilderState<T extends Enum> extends State<ScenarioBuilder<T>> {
+class _ScenarioBuilderState<T extends Enum, P extends BaseSettingsModel>
+    extends State<ScenarioBuilder<T, P>> {
   late T _action;
   late ScenarioController? _controller;
 
@@ -29,7 +31,8 @@ class _ScenarioBuilderState<T extends Enum> extends State<ScenarioBuilder<T>> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller = Settings.of(context, listen: true).scenarioController;
+
+    _controller = context.listenSetting<P>().scenarioController;
     _action = _controller!.get(widget.scenario);
   }
 

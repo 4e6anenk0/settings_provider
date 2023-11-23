@@ -1,4 +1,3 @@
-import 'package:example/multi_main.dart';
 import 'package:example/src/multi_settings_app/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
@@ -42,7 +41,8 @@ class _NameSettingsState extends State<NameSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _name = Settings.of<PersonalScreenSettings>(context).get(name);
+    _name = Settings.from<PersonalScreenSettings>(context)
+        .get(PersonalScreenSettings.name);
     _textController.text = _name;
   }
 
@@ -69,10 +69,11 @@ class _NameSettingsState extends State<NameSettings> {
           child: TextField(
             controller: _textController,
             onTapOutside: (event) async {
-              if (Settings.of<PersonalScreenSettings>(context).get(name) !=
+              if (Settings.from<PersonalScreenSettings>(context)
+                      .get(PersonalScreenSettings.name) !=
                   _name) {
-                await Settings.of<PersonalScreenSettings>(context)
-                    .update(name.copyWith(defaultValue: _name));
+                await Settings.from<PersonalScreenSettings>(context).update(
+                    PersonalScreenSettings.name.copyWith(defaultValue: _name));
               }
             },
             onChanged: (value) async {
@@ -100,7 +101,9 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _scaler = Settings.of<HomeScreenSettings>(context).get(counterScaler);
+    _scaler = context
+        .setting<HomeScreenSettings>()
+        .get(HomeScreenSettings.counterScaler);
     _textController.text = _scaler.toString();
   }
 
@@ -127,14 +130,16 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
           child: TextField(
             controller: _textController,
             onTapOutside: (event) {
-              if (Settings.of<HomeScreenSettings>(context).get(counterScaler) !=
+              if (Settings.from<HomeScreenSettings>(context)
+                      .get(HomeScreenSettings.counterScaler) !=
                   _scaler) {
                 if (_scaler != 0) {
-                  Settings.of<HomeScreenSettings>(context)
-                      .update(counterScaler.copyWith(defaultValue: _scaler));
+                  Settings.from<HomeScreenSettings>(context).update(
+                      HomeScreenSettings.counterScaler
+                          .copyWith(defaultValue: _scaler));
                 } else {
-                  Settings.of<HomeScreenSettings>(context)
-                      .update(counterScaler);
+                  Settings.from<HomeScreenSettings>(context)
+                      .update(HomeScreenSettings.counterScaler);
                 }
               }
             },
@@ -151,8 +156,8 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                       actions: [
                         TextButton(
                             onPressed: () {
-                              value = Settings.of<HomeScreenSettings>(context)
-                                  .get(counterScaler)
+                              value = Settings.from<HomeScreenSettings>(context)
+                                  .get(HomeScreenSettings.counterScaler)
                                   .toString();
 
                               Navigator.pop(context);
@@ -191,15 +196,17 @@ class DarkModeSetting extends StatelessWidget {
           child: Text('Dark Mode'),
         ),
         Switch(
-          value: Settings.of<HomeScreenSettings>(context, listen: true)
-              .get(isDarkMode),
+          value: Settings.listenFrom<HomeScreenSettings>(context)
+              .get(HomeScreenSettings.isDarkMode),
           onChanged: (newValue) {
             //print(newValue);
             //print(Settings.of<HomeScreenSettings>(context).get(isDarkMode));
             if (newValue !=
-                Settings.of<HomeScreenSettings>(context).get(isDarkMode)) {
-              Settings.of<HomeScreenSettings>(context)
-                  .update(isDarkMode.copyWith(defaultValue: newValue));
+                Settings.from<HomeScreenSettings>(context)
+                    .get(HomeScreenSettings.isDarkMode)) {
+              Settings.from<HomeScreenSettings>(context).update(
+                  HomeScreenSettings.isDarkMode
+                      .copyWith(defaultValue: newValue));
             }
           },
         ),

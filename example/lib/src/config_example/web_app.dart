@@ -10,11 +10,11 @@ class ConfigAppForWeb extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var setting = Config.of<WebConfig>(context).get(WebConfig.title);
+    var setting = Config.from<WebConfig>(context).get(WebConfig.title);
 
     ThemeData theme;
 
-    if (context.listenConfig<GeneralConfig>().get(GeneralConfig.isDarkMode)) {
+    if (context.listenSetting<GeneralConfig>().get(GeneralConfig.isDarkMode)) {
       theme = ThemeData.dark(useMaterial3: true);
     } else {
       theme = ThemeData(useMaterial3: true);

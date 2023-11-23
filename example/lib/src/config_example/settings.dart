@@ -1,9 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
 class GeneralConfig extends ConfigModel {
-  @override
-  String get id => 'General';
-
   @override
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
@@ -11,13 +9,7 @@ class GeneralConfig extends ConfigModel {
   List<Property> get properties => [isDarkMode, counterScaler, name];
 
   @override
-  List<Scenario<Enum>>? get scenarios => null;
-
-  @override
-  List<ISettingsStorage>? get scenarioStorages => null;
-
-  @override
-  List<ISettingsStorage>? get settingsStorages => null;
+  List<Scenario<Enum>>? get scenarios => [themeMode];
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -36,20 +28,14 @@ class GeneralConfig extends ConfigModel {
     id: 'name',
     isLocalStored: false,
   );
+
+  static Scenario<ThemeMode> themeMode =
+      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
 }
 
 class WebConfig extends ConfigModel {
   @override
-  String get id => 'WebConfig';
-
-  @override
   List<ConfigPlatform> get platforms => [ConfigPlatform.web];
-
-  @override
-  List<ISettingsStorage>? get scenarioStorages => null;
-
-  @override
-  List<ISettingsStorage>? get settingsStorages => null;
 
   @override
   List<Property> get properties => [title];

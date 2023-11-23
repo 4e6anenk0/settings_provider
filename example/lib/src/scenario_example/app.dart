@@ -10,7 +10,7 @@ class ScenarioApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScenarioBuilder(
+    return ScenarioBuilder<ThemeMode, GeneralSettings>(
       builder: (context, action) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -22,7 +22,7 @@ class ScenarioApp extends StatelessWidget {
           home: const MyHomePage(title: 'Setting Scenario Example'),
         );
       },
-      scenario: themeMode,
+      scenario: GeneralSettings.themeMode,
     );
   }
 }

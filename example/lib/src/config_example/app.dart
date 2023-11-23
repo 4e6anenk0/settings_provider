@@ -7,8 +7,27 @@ import 'settings.dart';
 class ConfigApp extends StatelessWidget {
   const ConfigApp({super.key});
 
-  // This widget is the root of your application.
   @override
+  Widget build(BuildContext context) {
+    return ScenarioBuilder<ThemeMode, GeneralConfig>(
+      builder: (context, action) {
+        //ThemeData theme;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          initialRoute: '/',
+          theme: ThemeData(),
+          darkTheme: ThemeData.dark(),
+          themeMode: action,
+          home: const MyHomePage(title: 'Setting Example'),
+        );
+      },
+      scenario: GeneralConfig.themeMode,
+    );
+  }
+
+  // This widget is the root of your application.
+  /* @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       ThemeData theme;
@@ -27,5 +46,5 @@ class ConfigApp extends StatelessWidget {
         home: const MyHomePage(title: 'Setting Example'),
       );
     });
-  }
+  } */
 }

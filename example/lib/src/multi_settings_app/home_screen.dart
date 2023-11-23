@@ -1,4 +1,4 @@
-import 'package:example/multi_main.dart';
+import 'package:example/src/config_example/settings.dart';
 import 'package:example/src/multi_settings_app/personal_screen.dart';
 import 'package:example/src/multi_settings_app/settings.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-      _counter += Settings.of<HomeScreenSettings>(context).get(counterScaler);
+      _counter += Settings.from<HomeScreenSettings>(context)
+          .get(GeneralConfig.counterScaler);
     });
   }
 

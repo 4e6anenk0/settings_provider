@@ -1,4 +1,3 @@
-import 'package:example/multi_main.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
@@ -17,7 +16,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
   @override
   void initState() {
     super.initState();
-    _name = Settings.of<PersonalScreenSettings>(context).get(name);
+    _name = Settings.from<PersonalScreenSettings>(context)
+        .get(PersonalScreenSettings.name);
   }
 
   @override

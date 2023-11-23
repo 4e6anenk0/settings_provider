@@ -55,9 +55,13 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
           child: Text('Theme mode'),
         ),
         PopupMenuButton(
-          initialValue: context.listenSetting().get(themeMode),
+          initialValue: context
+              .listenSetting<GeneralSettings>()
+              .get(GeneralSettings.themeMode),
           onSelected: (ThemeMode mode) {
-            context.setting().update(themeMode.copyWith(defaultValue: mode));
+            context
+                .setting<GeneralSettings>()
+                .update(GeneralSettings.themeMode.copyWith(defaultValue: mode));
           },
           itemBuilder: (context) => [
             PopupMenuItem(
@@ -96,7 +100,10 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text = context.setting().get(counterScaler).toString();
+    _textController.text = context
+        .setting<GeneralSettings>()
+        .get(GeneralSettings.counterScaler)
+        .toString();
   }
 
   @override
@@ -123,11 +130,13 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  context
-                      .setting()
-                      .update(counterScaler.copyWith(defaultValue: _scaler));
+                  context.setting<GeneralSettings>().update(GeneralSettings
+                      .counterScaler
+                      .copyWith(defaultValue: _scaler));
                 } else {
-                  context.setting().update(counterScaler);
+                  context
+                      .setting<GeneralSettings>()
+                      .update(GeneralSettings.counterScaler);
                 }
               },
               onChanged: (value) async {
@@ -144,8 +153,8 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                           TextButton(
                               onPressed: () {
                                 value = context
-                                    .setting()
-                                    .get(counterScaler)
+                                    .setting<GeneralSettings>()
+                                    .get(GeneralSettings.counterScaler)
                                     .toString();
                                 Navigator.pop(context);
                               },
@@ -183,13 +192,17 @@ class DarkModeSetting extends StatelessWidget {
         ),
         Switch(
           // switch use the getSetting() method to get the value
-          value: context.listenSetting().get(isDarkMode),
+          value: context
+              .listenSetting<GeneralSettings>()
+              .get(GeneralSettings.isDarkMode),
           onChanged: (newValue) {
-            if (newValue != context.setting().get(isDarkMode)) {
+            if (newValue !=
+                context
+                    .setting<GeneralSettings>()
+                    .get(GeneralSettings.isDarkMode)) {
               // if newValue is different we can update our settings
-              context
-                  .setting()
-                  .update(isDarkMode.copyWith(defaultValue: newValue));
+              context.setting<GeneralSettings>().update(
+                  GeneralSettings.isDarkMode.copyWith(defaultValue: newValue));
             }
           },
         ),

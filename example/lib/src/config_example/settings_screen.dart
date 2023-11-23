@@ -19,9 +19,70 @@ class SettingsScreen extends StatelessWidget {
             ),
             DarkModeSetting(),
             CounterScalerSettings(),
+            SizedBox(height: 20),
+            ThemeModeSetting()
           ],
         ),
       ),
+    );
+  }
+}
+
+class ThemeModeSetting extends StatefulWidget {
+  const ThemeModeSetting({super.key});
+
+  @override
+  State<ThemeModeSetting> createState() => _ThemeModeSettingState();
+}
+
+class _ThemeModeSettingState extends State<ThemeModeSetting> {
+  //ThemeMode? mode;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    //mode = context.listenSetting(themeMode);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.style),
+        const SizedBox(
+          width: 20,
+        ),
+        const Expanded(
+          flex: 4,
+          child: Text('Theme mode'),
+        ),
+        PopupMenuButton(
+          initialValue: context
+              .listenSetting<GeneralConfig>()
+              .get(GeneralConfig.themeMode),
+          onSelected: (ThemeMode mode) {
+            context
+                .setting<GeneralConfig>()
+                .update(GeneralConfig.themeMode.copyWith(defaultValue: mode));
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: ThemeMode.dark,
+              child: Text(ThemeMode.dark.name),
+            ),
+            PopupMenuItem(
+              value: ThemeMode.light,
+              child: Text(ThemeMode.light.name),
+            ),
+            PopupMenuItem(
+              value: ThemeMode.system,
+              child: Text(ThemeMode.system.name),
+            ),
+          ],
+          child:
+              const Row(children: [Text('Test'), Icon(Icons.arrow_drop_down)]),
+        )
+      ],
     );
   }
 }
@@ -42,7 +103,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
     super.initState();
     _textController = TextEditingController();
     _scaler =
-        Config.of<GeneralConfig>(context).get(GeneralConfig.counterScaler);
+        Config.from<GeneralConfig>(context).get(GeneralConfig.counterScaler);
     _textController.text = _scaler.toString();
   }
 
@@ -70,11 +131,11 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
               controller: _textController,
               onTapOutside: (event) {
                 if (_scaler != 0) {
-                  Config.of<GeneralConfig>(context).update(GeneralConfig
+                  Config.from<GeneralConfig>(context).update(GeneralConfig
                       .counterScaler
                       .copyWith(defaultValue: _scaler));
                 } else {
-                  Config.of<GeneralConfig>(context)
+                  Config.from<GeneralConfig>(context)
                       .update(GeneralConfig.counterScaler);
                 }
               },
@@ -91,7 +152,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                value = Config.of<GeneralConfig>(context)
+                                value = Config.from<GeneralConfig>(context)
                                     .get(GeneralConfig.counterScaler)
                                     .toString();
                                 Navigator.pop(context);
@@ -130,14 +191,14 @@ class DarkModeSetting extends StatelessWidget {
         ),
         Switch(
           // switch use the getSetting() method to get the value
-          value: Config.of<GeneralConfig>(context, listen: true)
+          value: Config.listenFrom<GeneralConfig>(context)
               .get(GeneralConfig.isDarkMode),
           onChanged: (newValue) {
             if (newValue !=
-                Config.of<GeneralConfig>(context)
+                Config.from<GeneralConfig>(context)
                     .get(GeneralConfig.isDarkMode)) {
               // if newValue is different we can update our settings
-              Config.of<GeneralConfig>(context).update(
+              Config.from<GeneralConfig>(context).update(
                   GeneralConfig.isDarkMode.copyWith(defaultValue: newValue));
             }
           },

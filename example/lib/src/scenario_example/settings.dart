@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
-var themeMode =
-    Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+class GeneralSettings extends SettingsModel {
+  @override
+  List<Property> get properties => [isDarkMode, counterScaler];
 
-const isDarkMode = Property<bool>(
-  defaultValue: false,
-  id: 'isDarkMode',
-  isLocalStored: true,
-);
+  @override
+  List<Scenario<Enum>>? get scenarios => [themeMode];
 
-const counterScaler = Property<int>(defaultValue: 1, id: 'counterScaler');
+  static const Property<bool> isDarkMode = Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: true,
+  );
 
-List<Property> settings = [isDarkMode, counterScaler];
+  static const Property<int> counterScaler =
+      Property(defaultValue: 1, id: 'counterScaler');
+
+  static Scenario<ThemeMode> themeMode =
+      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+}
