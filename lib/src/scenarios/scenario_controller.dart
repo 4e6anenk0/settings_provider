@@ -66,7 +66,8 @@ class ScenarioController implements ISettingsController {
   Property<String> _convertScenarioToProperty(Scenario scenario) {
     return Property(
         defaultValue: _mapEnumToString[scenario.defaultValue]!,
-        id: scenario.id);
+        id: scenario.id,
+        isLocalStored: scenario.isLocalStored);
   }
 
   @override

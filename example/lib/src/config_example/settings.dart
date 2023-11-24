@@ -14,7 +14,7 @@ class GeneralConfig extends ConfigModel {
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
     id: 'isDarkMode',
-    isLocalStored: true,
+    isLocalStored: false,
   );
 
   static Property<int> counterScaler = const Property(
@@ -29,8 +29,10 @@ class GeneralConfig extends ConfigModel {
     isLocalStored: false,
   );
 
-  static Scenario<ThemeMode> themeMode =
-      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+  static Scenario<ThemeMode> themeMode = Scenario(
+      actions: ThemeMode.values,
+      defaultValue: ThemeMode.dark,
+      isLocalStored: true);
 }
 
 class WebConfig extends ConfigModel {

@@ -11,12 +11,14 @@ class GeneralSettings extends SettingsModel {
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
     id: 'isDarkMode',
-    isLocalStored: true,
+    isLocalStored: false,
   );
 
   static const Property<int> counterScaler =
       Property(defaultValue: 1, id: 'counterScaler');
 
-  static Scenario<ThemeMode> themeMode =
-      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+  static Scenario<ThemeMode> themeMode = Scenario(
+      actions: ThemeMode.values,
+      defaultValue: ThemeMode.dark,
+      isLocalStored: true);
 }
