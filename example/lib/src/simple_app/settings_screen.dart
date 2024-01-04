@@ -40,10 +40,10 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _textController.text = context
-        .setting<GeneralSettings>()
-        .get(GeneralSettings.counterScaler)
-        .toString();
+    var scaler =
+        context.setting<GeneralSettings>().get(GeneralSettings.counterScaler);
+    _textController.text = scaler.toString();
+    _scaler = scaler;
   }
 
   @override

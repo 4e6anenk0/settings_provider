@@ -1,4 +1,6 @@
 import '../../settings_provider.dart';
+import '../helpers/settings_controller_interface.dart';
+import '../property_converter.dart';
 
 enum ConfigPlatform {
   ios,
@@ -11,21 +13,19 @@ enum ConfigPlatform {
 }
 
 abstract class ConfigModel extends BaseSettingsModel {
-  List<Property> get properties;
-  List<Scenario>? get scenarios;
+  List<BaseProperty> get properties;
   List<ConfigPlatform> get platforms;
   List<ISettingsStorage>? get settingsStorages => null;
-  List<ISettingsStorage>? get scenarioStorages => null;
   String get id => runtimeType.toString();
 
-  late final SettingsController _settingsController;
-  late final ScenarioController? _scenarioController;
+  @override
+  PropertyConverter get propertyConverter => _converter;
 
   @override
-  ScenarioController? get scenarioController => _scenarioController;
+  ISettingsController get controller => _controller;
 
-  @override
-  SettingsController get settingsController => _settingsController;
+  late final SettingsController _controller;
+  late final PropertyConverter _converter;
 
   bool _isInited = false;
   bool get isInited => _isInited;
@@ -42,16 +42,13 @@ abstract class ConfigModel extends BaseSettingsModel {
   Future<bool> init() async {
     if (_isCorrectPlatform()) {
       try {
-        _settingsController = await SettingsController.consist(
-            properties: properties, prefix: id, storages: settingsStorages);
-        if (scenarios != null) {
-          _scenarioController = await ScenarioController.init(
-              scenarios: scenarios!,
-              prefix: '$id.Scenario.',
-              storages: scenarioStorages);
-        } else {
-          _scenarioController = null;
-        }
+        _converter = PropertyConverter();
+        //_converter.registerAdapter(EnumPropertyConverter(), 'EnumProperty');
+        _controller = await SettingsController.consist(
+            properties: properties,
+            prefix: id,
+            storages: settingsStorages,
+            converter: _converter);
         _isInited = true;
         return true;
       } catch (e) {
@@ -63,55 +60,34 @@ abstract class ConfigModel extends BaseSettingsModel {
   }
 
   @override
-  T get<T>(Property<T> property) {
-    if (scenarioController != null && property is Scenario) {
-      return scenarioController!.get(property);
-    }
-    return settingsController.get(property);
+  T get<T>(BaseProperty<T> property) {
+    return _controller.get(property);
   }
 
   @override
-  Future<void> update<T>(Property<T> property) async {
-    if (scenarioController != null && property is Scenario) {
-      scenarioController!.update(property);
-      notifyListeners();
-    } else {
-      await settingsController.update(property);
-      notifyListeners();
-    }
+  Future<void> update<T>(BaseProperty<T> property) async {
+    await _controller.update(property);
+    notifyListeners();
   }
 
   @override
-  Future<void> setForLocal<T>(Property property) async {
-    if (scenarioController != null && property is Scenario) {
-      await scenarioController!.setForLocal(property);
-    } else {
-      await settingsController.setForLocal(property);
-    }
+  Future<void> setForLocal<T>(BaseProperty property) async {
+    await _controller.setForLocal(property);
   }
 
   @override
-  void setForSession<T>(Property property) {
-    if (scenarioController != null && property is Scenario) {
-      scenarioController!.setForSession(property);
-      notifyListeners();
-    } else {
-      settingsController.setForSession(property);
-      notifyListeners();
-    }
+  void setForSession<T>(BaseProperty property) {
+    _controller.setForSession(property);
+    notifyListeners();
   }
 
   @override
   Future<void> match() async {
-    if (scenarioController != null) {
-      await scenarioController!.match();
-    } else {
-      await settingsController.match();
-    }
+    await _controller.match();
   }
 
   @override
   Map<String, Object> getAll() {
-    return settingsController.getAll();
+    return _controller.getAll();
   }
 }

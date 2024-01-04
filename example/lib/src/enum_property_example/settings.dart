@@ -3,10 +3,7 @@ import 'package:settings_provider/settings_provider.dart';
 
 class GeneralSettings extends SettingsModel {
   @override
-  List<Property> get properties => [isDarkMode, counterScaler];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => [themeMode];
+  List<BaseProperty> get properties => [isDarkMode, counterScaler, themeMode];
 
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
@@ -17,8 +14,9 @@ class GeneralSettings extends SettingsModel {
   static const Property<int> counterScaler =
       Property(defaultValue: 1, id: 'counterScaler');
 
-  static Scenario<ThemeMode> themeMode = Scenario(
-      actions: ThemeMode.values,
+  static EnumProperty<ThemeMode> themeMode = const EnumProperty(
+      id: 'themeMode',
+      values: ThemeMode.values,
       defaultValue: ThemeMode.dark,
       isLocalStored: true);
 }

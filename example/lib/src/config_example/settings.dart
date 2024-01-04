@@ -6,10 +6,12 @@ class GeneralConfig extends ConfigModel {
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
   @override
-  List<Property> get properties => [isDarkMode, counterScaler, name];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => [themeMode];
+  List<BaseProperty> get properties => [
+        isDarkMode,
+        counterScaler,
+        name,
+        themeMode,
+      ];
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -29,8 +31,9 @@ class GeneralConfig extends ConfigModel {
     isLocalStored: false,
   );
 
-  static Scenario<ThemeMode> themeMode = Scenario(
-      actions: ThemeMode.values,
+  static EnumProperty<ThemeMode> themeMode = const EnumProperty(
+      id: 'themeMode',
+      values: ThemeMode.values,
       defaultValue: ThemeMode.dark,
       isLocalStored: true);
 }
@@ -41,9 +44,6 @@ class WebConfig extends ConfigModel {
 
   @override
   List<Property> get properties => [title];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
 
   static Property<String> title = const Property(
     defaultValue: "It's Web App!",

@@ -9,7 +9,7 @@ class ConfigApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScenarioBuilder<ThemeMode, GeneralConfig>(
+    return EnumPropertyBuilder<ThemeMode, GeneralConfig>(
       builder: (context, action) {
         //ThemeData theme;
         return MaterialApp(
@@ -22,7 +22,7 @@ class ConfigApp extends StatelessWidget {
           home: const MyHomePage(title: 'Setting Example'),
         );
       },
-      scenario: GeneralConfig.themeMode,
+      property: GeneralConfig.themeMode,
     );
   }
 
