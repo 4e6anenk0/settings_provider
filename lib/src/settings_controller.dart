@@ -4,7 +4,6 @@ import 'helpers/exceptions.dart';
 import 'interfaces/converter_interface.dart';
 import 'interfaces/settings_controller_interface.dart';
 import 'properties/base/property.dart';
-import 'property_converter.dart';
 import 'property_session.dart';
 import 'storages/sp_storage.dart';
 import 'interfaces/storage_interface.dart';
