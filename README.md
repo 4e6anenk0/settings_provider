@@ -27,7 +27,7 @@ If you need to store the Enum locally and the last value to build the appropriat
 
 - [More about EnumProperty ...](https://github.com/4e6anenk0/settings_provider#3-the-scenario-property-class-with-scenariobuilder-widget-class-example-of-usage)
 
-- [Migration from 0.2.1 to 0.3.0]()
+- [Migration from 0.2.1 to 0.3.0](https://github.com/4e6anenk0/settings_provider?tab=readme-ov-file#migration-from-021-to-030)
 
 Also visit pub.dev:
 
