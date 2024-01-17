@@ -1,42 +1,45 @@
-import 'dart:collection';
+import 'dart:async';
 
 import 'helpers/exceptions.dart';
-import 'helpers/settings_controller_interface.dart';
+import 'interfaces/converter_interface.dart';
+import 'interfaces/settings_controller_interface.dart';
 import 'properties/base/property.dart';
 import 'property_converter.dart';
-import 'storage/multi_storage.dart';
-import 'storage/single_storage.dart';
-import 'storage/sp_storage.dart';
-import 'helpers/storage_interface.dart';
+import 'property_session.dart';
+import 'storages/sp_storage.dart';
+import 'interfaces/storage_interface.dart';
+import 'storages/storage.dart';
 
 /// A controller that allows you to manage immutable settings configuration
 class SettingsController implements ISettingsController {
-  SettingsController._(
-    this.properties, {
+  SettingsController._({
+    List<BaseProperty>? properties,
     String? prefix,
-    required PropertyConverter converter,
-    bool isDebug = false,
+    required IPropertyConverter converter,
     List<ISettingsStorage>? storages,
-  })  : _isDebug = isDebug,
+    bool isDebug = false,
+  })  : _properties = properties,
+        _isDebug = isDebug,
         _converter = converter,
         _prefix = prefix,
         _storages = storages ?? [SharedPrefStorage()];
 
   /// Non consist controller
   factory SettingsController.nonconsist({
-    required List<BaseProperty> properties,
+    List<BaseProperty>? properties,
     String? prefix,
-    required PropertyConverter converter,
-    bool isDebug = false,
+    required IPropertyConverter converter,
     List<ISettingsStorage>? storages,
+    bool isDebug = false,
   }) {
     SettingsController controller = SettingsController._(
-      properties,
+      properties: properties,
       prefix: prefix,
       converter: converter,
-      isDebug: isDebug,
       storages: storages,
+      isDebug: isDebug,
     );
+
     controller._init();
 
     return controller;
@@ -46,17 +49,18 @@ class SettingsController implements ISettingsController {
   factory SettingsController.lazy({
     List<BaseProperty>? properties,
     String? prefix,
-    required PropertyConverter converter,
-    bool isDebug = false,
+    required IPropertyConverter converter,
     List<ISettingsStorage>? storages,
+    bool isDebug = false,
   }) {
     SettingsController controller = SettingsController._(
-      properties,
+      properties: properties,
       prefix: prefix,
       converter: converter,
-      isDebug: isDebug,
       storages: storages,
+      isDebug: isDebug,
     );
+
     return controller;
   }
 
@@ -69,36 +73,41 @@ class SettingsController implements ISettingsController {
   static Future<SettingsController> consist({
     List<BaseProperty>? properties,
     String? prefix,
-    required PropertyConverter converter,
-    bool isDebug = false,
+    required IPropertyConverter converter,
     List<ISettingsStorage>? storages,
+    bool isDebug = false,
   }) async {
     SettingsController controller = SettingsController._(
-      properties,
+      properties: properties,
       prefix: prefix,
       converter: converter,
-      isDebug: isDebug,
       storages: storages,
+      isDebug: isDebug,
     );
+
     await controller._init();
+
     return controller;
   }
 
-  final PropertyConverter _converter;
+  /// A converter is required to convert properties to the Property type
+  final IPropertyConverter _converter;
 
   /// List of all repositories to save settings.
   final List<ISettingsStorage> _storages;
 
   /// A class that handles a single repository or multiple repositories.
-  late final ISettingsStorage settingsStorage;
+  //late final ISettingsStorage settingsStorage;
+  late final StorageOverlay _storage;
 
   /// Flag to check initialization status. Required for lazy initialization cases.
   bool _isInited = false;
   bool get isInited => _isInited;
 
   /// A set of properties that are declarative descriptions of settings parameters.
-  final List<BaseProperty>? properties;
+  final List<BaseProperty>? _properties;
 
+  /// A list of converted properties to the Property type
   final List<Property> _adaptedProperties = [];
 
   /// Adds a prefix to the settings keys.
@@ -118,7 +127,9 @@ class SettingsController implements ISettingsController {
   /// utility parameter to initialize data
   /// with less overhead than directly modifying immutable data in `SettingData`
   // final Map<String, Object> _sessionSettings = {};
-  final HashMap<String, Object> _sessionSettings = HashMap();
+  //final HashMap<String, Object> _sessionSettings = HashMap();
+
+  final PropertySession _session = PropertySession();
 
   /// A utility parameter for aggregating new keys that represent
   /// the future view of the _snapshot parameter.
@@ -137,37 +148,28 @@ class SettingsController implements ISettingsController {
   }
 
   Future<void> _init() async {
-    _setPrefixIfExist();
-
-    settingsStorage = _getSettingsStorage(_storages);
-    await settingsStorage.init();
+    _storage =
+        StorageOverlay(storages: _storages, prefix: _prefix, bind: Property);
 
     if (_isDebug) {
-      settingsStorage.clear();
+      _storage.clear();
     }
 
-    _keysMap[_snapshot.id] = _name(_snapshot.id);
+    if (_properties != null) {
+      _storage.makePrefixedKeysDump(_properties!);
+      _storage.makePrefixedKeyDump(_snapshot);
 
-    if (properties != null) {
-      _adaptingProperties(properties!);
-      if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
-        List<String> snapshotData = settingsStorage.getSetting(
-            _keysMap[_snapshot.id]!, _snapshot.defaultValue);
+      _adaptingProperties(_properties!);
+
+      if (await _storage.isContains(_snapshot.id)) {
+        List<String> snapshotData =
+            await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
         _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
       }
+
       await _initSettingsMap(_adaptedProperties);
     }
     _isInited = true;
-  }
-
-  ISettingsStorage _getSettingsStorage(List<ISettingsStorage> storages) {
-    if (storages.length == 1) {
-      return SingleSettingsStorage(storages.first);
-    } else if (storages.isEmpty) {
-      return SingleSettingsStorage(SharedPrefStorage());
-    } else {
-      return MultiSettingsStorage(storages: storages);
-    }
   }
 
   void _adaptingProperties(List<BaseProperty> properties) {
@@ -177,20 +179,10 @@ class SettingsController implements ISettingsController {
   }
 
   void updateSettings() async {
-    var snapshotData = settingsStorage.getSetting(
-        _keysMap[_snapshot.id]!, _snapshot.defaultValue);
+    var snapshotData =
+        await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
     _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
     await _initSettingsMap(_adaptedProperties);
-  }
-
-  late String Function(String name) _name;
-
-  void _setPrefixIfExist() {
-    if (_prefix == null) {
-      _name = (name) => name;
-    } else {
-      _name = (name) => "$_prefix$name";
-    }
   }
 
   bool isUniqueID(String id) {
@@ -208,20 +200,21 @@ class SettingsController implements ISettingsController {
             property.id);
       }
 
-      _keysMap[property.id] = _name(property.id);
+      _keysMap[property.id] =
+          _storage.getPrefixedKey(property.id) ?? "$_prefix${property.id}";
 
       if (property.isLocalStored) {
         if (_snapshot.defaultValue.isEmpty) {
-          _initSetting(property);
+          await _initSetting(property);
         } else {
           if (_snapshot.defaultValue.contains(_keysMap[property.id])) {
-            _restoreSetting(property);
+            await _restoreSetting(property);
           } else {
-            _initSetting(property);
+            await _initSetting(property);
           }
         }
       } else {
-        _sessionSettings[property.id] = property.defaultValue;
+        _session.set(property);
       }
     }
 
@@ -231,17 +224,15 @@ class SettingsController implements ISettingsController {
   }
 
   /// Method to restore data from local storage
-  void _restoreSetting(Property property) {
-    var value = settingsStorage.getSetting(
-        _keysMap[property.id] ?? _name(property.id), property.defaultValue);
-    _sessionSettings[property.id] = value;
+  FutureOr<void> _restoreSetting(Property property) async {
+    var value = await _storage.getSetting(property.id, property.defaultValue);
+    _session.setFromValue(value: value, id: property.id);
   }
 
   /// Method for setting data to local storage
   Future<void> _initSetting(Property property) async {
-    await settingsStorage.setSetting(
-        _keysMap[property.id] ?? _name(property.id), property.defaultValue);
-    _sessionSettings[property.id] = property.defaultValue;
+    await _storage.setSetting(property.id, property.defaultValue);
+    _session.set(property);
   }
 
   /// Method to create a snapshot.
@@ -255,23 +246,23 @@ class SettingsController implements ISettingsController {
       }
     }
     Property snapshotProperty = _snapshot.copyWith(defaultValue: keysList);
-    await settingsStorage.setSetting(
-        _keysMap[snapshotProperty.id]!, snapshotProperty.defaultValue);
+    await _storage.setSetting(
+        snapshotProperty.id, snapshotProperty.defaultValue);
   }
 
   /// A method that helps to remove settings that are not in the
   /// current list of propertyes and clear unused keys dump
   Future<void> clearCache() async {
-    if (settingsStorage.isContains(_keysMap[_snapshot.id]!)) {
+    if (await _storage.isContains(_snapshot.id)) {
       // if the snapshot already exists, we get it
-      List<String> snapshot = settingsStorage.getSetting(
-          _keysMap[_snapshot.id]!, _snapshot.defaultValue);
+      List<String> snapshot =
+          await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
 
       Future.forEach(snapshot, (key) {
         // if the key is in the list of current keys,
         // then there is no need to delete in settings, it is still actuality
         if (!_keysMap.containsKey(key)) {
-          Future.value(settingsStorage.removeSetting(key));
+          Future.value(_storage.removeSetting(key));
         }
       });
     }
@@ -279,22 +270,20 @@ class SettingsController implements ISettingsController {
 
   @override
   Future<void> update<T>(BaseProperty property) async {
-    if (_sessionSettings.containsKey(property.id)) {
+    if (_session.contains(property)) {
       var adaptedProperty = _converter.convertTo(property);
-      _sessionSettings[adaptedProperty.id] = adaptedProperty.defaultValue;
+      _session.set(adaptedProperty);
       if (property.isLocalStored) {
-        await settingsStorage.setSetting(
-            _keysMap[adaptedProperty.id]!, adaptedProperty.defaultValue);
+        await _storage.setSetting(
+            adaptedProperty.id, adaptedProperty.defaultValue);
       }
     }
   }
 
   @override
   void setForSession<T>(BaseProperty property) {
-    String key = property.id;
-    if (_sessionSettings.containsKey(key)) {
-      var adaptedProperty = _converter.convertTo(property);
-      _sessionSettings[key] = adaptedProperty.defaultValue;
+    if (_session.contains(property)) {
+      _session.set(_converter.convertTo(property));
     }
   }
 
@@ -302,20 +291,18 @@ class SettingsController implements ISettingsController {
   Future<void> setForLocal<T>(BaseProperty property) async {
     if (property.isLocalStored) {
       var adaptedProperty = _converter.convertTo(property);
-      await settingsStorage.setSetting(
-          _keysMap[adaptedProperty.id]!, adaptedProperty.defaultValue);
+      await _storage.setSetting(
+          adaptedProperty.id, adaptedProperty.defaultValue);
     }
   }
 
   @override
   Future<void> match() async {
-    if (properties != null) {
+    if (_properties != null) {
       for (Property property in _adaptedProperties) {
-        if (property.isLocalStored &&
-            _sessionSettings.containsKey(property.id)) {
-          var needToStoreValue = _sessionSettings[property.id];
-          await settingsStorage.setSetting(
-              _keysMap[property.id]!, needToStoreValue!);
+        if (property.isLocalStored && _session.contains(property)) {
+          var needToStoreValue = _session.get(property);
+          await _storage.setSetting(property.id, needToStoreValue!);
         }
       }
     }
@@ -323,13 +310,13 @@ class SettingsController implements ISettingsController {
 
   @override
   Map<String, Object> getAll() {
-    return _sessionSettings;
+    return _session.settings;
   }
 
   @override
   T get<T>(BaseProperty<T> property) {
-    if (_sessionSettings.containsKey(property.id)) {
-      var value = _sessionSettings[property.id];
+    if (_session.contains(property)) {
+      var value = _session.get(property);
       return _converter.convertValue(value, property);
     } else {
       return property.defaultValue;

@@ -1,11 +1,8 @@
-import '../../helpers/converter_interface.dart';
+import '../../interfaces/converter_interface.dart';
 import '../base/property.dart';
 import 'enum_property.dart';
 
-/// A class for managing `Enum` settings through `EnumProperty` properties.
-///
-/// Implements an extension over the base `SettingsController` class for `Property`.
-class EnumPropertyConverter implements IConverter<EnumProperty> {
+class EnumPropertyConverter implements IPropertyConverter<EnumProperty> {
   Map<String, Enum> _parse(EnumProperty<Enum> property) {
     var parsed = <String, Enum>{};
     for (Enum value in property.values) {

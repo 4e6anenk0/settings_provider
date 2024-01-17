@@ -11,14 +11,14 @@ class EnumPropertyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EnumPropertyBuilder<ThemeMode, GeneralSettings>(
-      builder: (context, enumValue) {
+      builder: (context, value) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           initialRoute: '/',
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: enumValue,
+          themeMode: value,
           home: const MyHomePage(title: 'Setting EnumProperty Example'),
         );
       },

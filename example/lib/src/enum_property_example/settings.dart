@@ -14,7 +14,7 @@ class GeneralSettings extends SettingsModel {
   static const Property<int> counterScaler =
       Property(defaultValue: 1, id: 'counterScaler');
 
-  static EnumProperty<ThemeMode> themeMode = const EnumProperty(
+  static const EnumProperty<ThemeMode> themeMode = EnumProperty(
       id: 'themeMode',
       values: ThemeMode.values,
       defaultValue: ThemeMode.dark,

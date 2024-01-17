@@ -3,6 +3,8 @@ import 'package:nested/nested.dart';
 
 import '../../settings_provider.dart';
 
+/// ConfigBuilder allows you to build a tree of widgets depending
+/// on the target platform on which the app is launched
 class ConfigBuilder<T extends SingleChildWidget> extends StatefulWidget {
   const ConfigBuilder({
     super.key,
@@ -10,6 +12,7 @@ class ConfigBuilder<T extends SingleChildWidget> extends StatefulWidget {
     required this.providers,
   });
 
+  /// A method that allocates initialized settings models for the target platform
   List<T> _getInitedSettingsProviders() {
     List<T> initedProviders = [];
     for (T provider in providers) {

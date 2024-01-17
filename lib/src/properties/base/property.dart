@@ -1,9 +1,8 @@
 abstract class BaseProperty<T> {
-  const BaseProperty({
-    required this.defaultValue,
-    required this.id,
-    required this.isLocalStored,
-  });
+  const BaseProperty(
+      {required this.defaultValue,
+      required this.id,
+      required this.isLocalStored});
 
   String get type;
 
@@ -54,5 +53,26 @@ class Property<T> extends BaseProperty<T> {
       id: id,
       isLocalStored: isLocalStored ?? this.isLocalStored,
     );
+  }
+}
+
+/// A property for declaratively describing settings that can be converted
+/// to the format required for display
+class UIProperty<I, O> extends Property<I> {
+  UIProperty({
+    required super.defaultValue,
+    required super.id,
+    super.isLocalStored,
+    this.converter,
+  });
+
+  final O Function(I value)? converter;
+
+  O? toUI() {
+    if (converter != null) {
+      return converter!(defaultValue);
+    } else {
+      return null;
+    }
   }
 }

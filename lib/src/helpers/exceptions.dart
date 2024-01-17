@@ -20,3 +20,15 @@ class AdapterExeption implements Exception {
     return "AdapterExeption: $message.";
   }
 }
+
+class InitializationError implements Exception {
+  InitializationError({required this.model, this.message});
+
+  final String model;
+  final String? message;
+
+  @override
+  String toString() {
+    return 'Error initializing settings model. Model: $model. $message';
+  }
+}

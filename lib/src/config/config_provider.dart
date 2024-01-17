@@ -34,6 +34,7 @@ class Config<T extends SingleChildWidget> extends StatefulWidget {
     return ConfigPlatform.general;
   }
 
+  /// A method that allocates initialized settings models for the target platform
   List<T> _getInitedSettingsProviders() {
     List<T> initedProviders = [];
     for (T provider in providers) {

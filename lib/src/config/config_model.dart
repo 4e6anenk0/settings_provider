@@ -1,6 +1,8 @@
 import '../../settings_provider.dart';
-import '../helpers/settings_controller_interface.dart';
+import '../helpers/exceptions.dart';
+import '../interfaces/settings_controller_interface.dart';
 import '../property_converter.dart';
+import '../storages/storage.dart';
 
 enum ConfigPlatform {
   ios,
@@ -15,21 +17,27 @@ enum ConfigPlatform {
 abstract class ConfigModel extends BaseSettingsModel {
   List<BaseProperty> get properties;
   List<ConfigPlatform> get platforms;
-  List<ISettingsStorage>? get settingsStorages => null;
+  List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
 
   @override
-  PropertyConverter get propertyConverter => _converter;
+  PropertyConverter get converter => _converter;
 
   @override
   ISettingsController get controller => _controller;
 
+  @override
+  SettingsStorage get storage => _storage;
+
   late final SettingsController _controller;
-  late final PropertyConverter _converter;
+  final PropertyConverter _converter = PropertyConverter();
+  final SettingsStorage _storage = SettingsStorage.getInstance();
 
   bool _isInited = false;
   bool get isInited => _isInited;
 
+  /// A method that checks whether the list of target platforms
+  /// has a generic destination type (for all platforms) or a specific destination type
   bool _isCorrectPlatform() {
     if (platforms.contains(ConfigPlatform.general) ||
         platforms.contains(Config.platform)) {
@@ -39,23 +47,23 @@ abstract class ConfigModel extends BaseSettingsModel {
     }
   }
 
-  Future<bool> init() async {
+  Future<void> init() async {
     if (_isCorrectPlatform()) {
       try {
-        _converter = PropertyConverter();
-        //_converter.registerAdapter(EnumPropertyConverter(), 'EnumProperty');
+        if (_storage.isNotInited) {
+          await _storage.init();
+        }
+
         _controller = await SettingsController.consist(
             properties: properties,
             prefix: id,
-            storages: settingsStorages,
+            storages: storages,
             converter: _converter);
+
         _isInited = true;
-        return true;
       } catch (e) {
-        return false;
+        throw InitializationError(model: runtimeType.toString());
       }
-    } else {
-      return false;
     }
   }
 

@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:settings_provider/src/helpers/extensions.dart';
-import 'package:settings_provider/src/helpers/settings_controller_interface.dart';
+import 'package:settings_provider/src/interfaces/settings_controller_interface.dart';
 
 import '../../settings.dart';
 import 'enum_property.dart';
 
+/// A class that allows you to build a tree of widgets based
+/// on the stored (or set) Enum value
 class EnumPropertyBuilder<T extends Enum, P extends BaseSettingsModel>
     extends StatefulWidget {
   const EnumPropertyBuilder({
@@ -13,7 +15,7 @@ class EnumPropertyBuilder<T extends Enum, P extends BaseSettingsModel>
     super.key,
   });
 
-  final Widget Function(BuildContext context, T enumValue) builder;
+  final Widget Function(BuildContext context, T value) builder;
 
   final EnumProperty<T> property;
 
@@ -23,7 +25,7 @@ class EnumPropertyBuilder<T extends Enum, P extends BaseSettingsModel>
 
 class _EnumPropertyBuilderState<T extends Enum, P extends BaseSettingsModel>
     extends State<EnumPropertyBuilder<T, P>> {
-  late T _enumValue;
+  late T _value;
   late ISettingsController? _controller;
 
   @override
@@ -37,9 +39,9 @@ class _EnumPropertyBuilderState<T extends Enum, P extends BaseSettingsModel>
 
     var model = context.listenSetting<P>();
     _controller = model.controller;
-    _enumValue = _controller!.get(widget.property);
+    _value = _controller!.get(widget.property);
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _enumValue);
+  Widget build(BuildContext context) => widget.builder(context, _value);
 }

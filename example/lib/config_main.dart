@@ -11,8 +11,6 @@ void main() async {
   var generalConfig = GeneralConfig();
   var webConfig = WebConfig();
 
-  //Settings.registerConverter();
-
   await generalConfig.init();
   await webConfig.init();
 

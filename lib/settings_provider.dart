@@ -1,11 +1,11 @@
 library settings_provider;
 
 export './src/settings.dart';
-export './src/settings_controller.dart';
+export 'src/settings_controller.dart';
 export 'src/properties/base/property.dart';
 
-export 'src/helpers/storage_interface.dart';
-export './src/storage/sp_storage.dart';
+export 'src/interfaces/storage_interface.dart';
+export 'src/storages/sp_storage.dart';
 
 export 'src/properties/enum/enum_property.dart';
 export 'src/properties/enum/enum_property_builder.dart';

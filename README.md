@@ -11,9 +11,8 @@ A library for providing declarative configuration of app settings.
 - Description of configuration settings using declarative properties;
 - It is convenient to separate settings from the project;
 - Handy methods and helper functions to manage settings;
-- Ability to react UI to changes in settings and receive settings from the context;
 - Use the `Setting` widget to easily provide settings in your project.
-- Use the `Scenario` properties for the Enums and `ScenarioBuilder` to build the appropriate UI;
+- Use the `EnumProperty` properties for the Enums and `EnumPropertyBuilder` to build the appropriate UI;
 - Use `Config` and `ConfigBuilder` to group settings by platform and use the groups of settings depending on the platform.
 
 If you need the simplest implementation, read about the `Settings` widget:
@@ -26,7 +25,9 @@ If you want the most flexible and powerful solution, see about `Config` and `Con
 
 If you need to store the Enum locally and the last value to build the appropriate UI, then see more about the Scenario property:
 
-- [More about Scenario property ...](https://github.com/4e6anenk0/settings_provider#3-the-scenario-property-class-with-scenariobuilder-widget-class-example-of-usage)
+- [More about EnumProperty ...](https://github.com/4e6anenk0/settings_provider#3-the-scenario-property-class-with-scenariobuilder-widget-class-example-of-usage)
+
+- [Migration from 0.2.1 to 0.3.0]()
 
 Also visit pub.dev:
 
@@ -48,10 +49,7 @@ Also visit pub.dev:
 ```dart
 class GeneralSettings extends SettingsModel {
   @override
-  List<Property> get properties => [isDarkMode, counterScaler];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
+  List<BaseProperty> get properties => [isDarkMode, counterScaler];
 
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
@@ -112,10 +110,7 @@ class GeneralConfig extends ConfigModel {
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
   @override
-  List<Property> get properties => [isDarkMode, counterScaler, name];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
+  List<BaseProperty> get properties => [isDarkMode, counterScaler, name];
 
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
@@ -197,15 +192,19 @@ The `settings_provider` library implements several concepts that are familiar to
 
 The `settings_provider` separates settings into local settings (delegated to the Shared Preference storage or other local storage) and equivalent current session settings. The `settings_provider` tries to keep settings synchronized between these levels. For this, the entire configuration is described in `Property()` objects, which are immutable, constant and declarative. Also, `settings_provider` automatically creates the required settings both locally (optionaly) and in the current session.
 
-All interaction with the settings happens through the `SettingsController`. All interaction with the scenarios happens through the `ScenarioController`.
+All interaction with the settings happens through the `SettingsController`.
 
 ## Usage
 
 ### 1. The `Settings()` widget class. Example of the simplest usage
 
-#### 1.1. Property
+#### 1.1. Properties
 
-To create a configuration, the package provides a `Property()` class that allows you to create a declarative configuration of settings.
+To create a configuration, the package provides a several classes that allows you to create a declarative configuration of settings:
+
+- `Property` - a simple declarative setting property
+- `UIProperty`- like property, but with a converter function to convert data into a readable format for the UI
+- `EnumProperty` - property with the ability to store Enum settings
 
 **Property only describes the setting and does not have to match your current or local settings configuration.** This means you need only care about the default value in you app and whether this value should be stored in local storage (SharedPreferences by default).
 
@@ -329,7 +328,7 @@ context.listenSetting<T>().get(property);
 Instead:
 
 ```dart
-Settings.listenFrom(context).get(property);
+Settings.listenFrom<T>(context).get(property);
 ```
 
 Choose what is more convenient for you.
@@ -345,10 +344,7 @@ First configuration:
 ```dart
 class FirstSettings extends SettingsModel {
   @override
-  List<Property> get properties => [isDarkMode, counterScaler];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
+  List<BaseProperty> get properties => [isDarkMode, counterScaler];
 
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
@@ -366,10 +362,7 @@ Second configuration:
 ```dart
 class SecondSettings extends SettingsModel {
   @override
-  List<Property> get properties => [name];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
+  List<BaseProperty> get properties => [name];
 
   static const Property<String> name =
       Property(defaultValue: 'John', id: 'name');
@@ -414,17 +407,17 @@ context.setting<FirstSettings>().get(counterScaler);
 context.setting<SecondSettings>().get(name);
 ```
 
-### 3. The `Scenario()` property class with `ScenarioBuilder()` widget class. Example of usage
+### 3. The `EnumProperty()` property class with `EnumPropertyBuilder()` widget class. Example of usage
 
-The Scenario() class is inherited from the Property() class. So, it can be considered that scenarios are similar to properties. Yes, although scenarios share many commonalities, they can't be processed without converting them to properties. This is the task of the ScenarioController(), which parses enums and transforms them to strings, creating mappings (Enum -> String) or (String -> Enum) for the current session of the app, and it creates a set of properties to be passed to the SettingsController().
+The `EnumProperty()` class is inherited from the BaseProperty() class. So, it can be considered that enum properties are similar to properties. Yes, although enum property share many commonalities, they can't be processed without converting them to properties. This is the task of the EnumPropertyConverter(), which parses enums and transforms them to strings, creating mappings (Enum -> String) or (String -> Enum) for the current session of the app, and it creates a set of properties to be passed to the SettingsController().
 
-#### 3.1. The `Scenario()` property
+#### 3.1. The `EnumProperty()`
 
-Let's create scenario property:
+Let's create enum property:
 
 ```dart
-Scenario<ThemeMode> themeMode =
-    Scenario(
+EnumProperty<ThemeMode> themeMode =
+    EnumProperty(
       actions: ThemeMode.values, 
       defaultValue: ThemeMode.dark
     );
@@ -432,22 +425,21 @@ Scenario<ThemeMode> themeMode =
 
 In our example, we use the standard Enum from the Flutter library known as the `ThemeMode`.
 
-As you can see, scenarios are very similar to properties. Unlike Property(), we should pass the parameter `actions`, which is of type `List<Enum>`. To get a list of enums you should call `Enum.values`. But the id parameter shouldn't be passed.
+As you can see, EnumProperty() are very similar to properties. Unlike Property(), we should pass the parameter `actions`, which is of type `List<Enum>`. To get a list of enums you should call `Enum.values`. But the id parameter shouldn't be passed.
 
-#### 3.2. Create a class based on SettingsModel with scenarios
+#### 3.2. Create a class based on SettingsModel with enum property
 
 ```dart
 class GeneralSettings extends SettingsModel {
   
   ...
 
-  @override
-  List<Scenario<Enum>>? get scenarios => [themeMode];
+  List<BaseProperty> get properties => [themeMode];
 
   ...
 
-  static Scenario<ThemeMode> themeMode =
-      Scenario(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
+  static const EnumProperty<ThemeMode> themeMode =
+      EnumProperty(actions: ThemeMode.values, defaultValue: ThemeMode.dark);
 }
 ```
 
@@ -470,27 +462,27 @@ void main() async {
 }
 ```
 
-#### 3.3. Use a ScenarioBuilder to build a UI that depends on the Enum value
+#### 3.3. Use a EnumPropertyBuilder to build a UI that depends on the Enum value
 
 ```dart
-class ScenarioApp extends StatelessWidget {
-  const ScenarioApp({super.key});
+class EnumPropertyApp extends StatelessWidget {
+  const EnumPropertyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ScenarioBuilder<ThemeMode, GeneralSettings>(
-      builder: (context, action) {
+    return EnumPropertyBuilder<ThemeMode, GeneralSettings>(
+      builder: (context, value) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           initialRoute: '/',
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: action,
-          home: const MyHomePage(title: 'Setting Scenario Example'),
+          themeMode: value,
+          home: const MyHomePage(title: 'Setting EnumPropertyBuilder Example'),
         );
       },
-      scenario: GeneralSettings.themeMode,
+      property: GeneralSettings.themeMode,
     );
   }
 }
@@ -499,23 +491,19 @@ class ScenarioApp extends StatelessWidget {
 Consider `ScenarioBuilder<T, P>()` individually:
 
 ```dart
-ScenarioBuilder<ThemeMode, GeneralSettings>(
-      builder: (context, action) {
+EnumPropertyBuilder<ThemeMode, GeneralSettings>(
+      builder: (context, value) {
         return MaterialApp(
           ...
-          themeMode: action,
+          themeMode: value,
           ...
         );
       },
-      scenario: GeneralSettings.themeMode,
+      property: GeneralSettings.themeMode,
     );
 ```
 
-As we can see, using Enum to build a dependent UI is quite simple. The `ScenarioBuilder()` class has its own builder that accepts `context` and `action`. The `action` itself is the Enum value we need and can use. And the `scenario` parameter accepts the `Scenario()` property on which the specific `ScenarioBuilder()` depends.
-
-#### Why is it called Scenario?
-
-Why is it called "Scenario"? Scenarios characterize a sequence of actions according to a role. Each Enum value is unique in the context of building a unique configuration and associated UI. Therefore, a limited set of Enum values creates a specific set of configurations, making it a kind of distinct "scenario." Additionally, Scenario() can be used within the ConfigBuilder() class, which provides a way to build the SettingsController() with the corresponding set of related properties that depend on the Enum value in ConfigBuilder. This concept also resembles the notion of execution scenarios.
+As we can see, using Enum to build a dependent UI is quite simple. The `EnumPropertyBuilder()` class has its own builder that accepts `context` and `value`. The `value` itself is the Enum value we need and can use. And the `property` parameter accepts the `EnumProperty()` property on which the specific `EnumPropertyBuilder()` depends.
 
 ### 4. The `ConfigModel()` property class with `ConfigBuilder()` or `Config()` widget class. Example of usage
 
@@ -538,10 +526,7 @@ class MyConfig extends ConfigModel {
   List<ConfigPlatform> get platforms => throw UnimplementedError();
 
   @override
-  List<Property> get properties => throw UnimplementedError();
-
-  @override
-  List<Scenario<Enum>>? get scenarios => throw UnimplementedError();
+  List<BaseProperty> get properties => throw UnimplementedError();
 
   ...
 }
@@ -556,26 +541,23 @@ class MyConfig extends ConfigModel {
   List<ConfigPlatform> get platforms => [ConfigsPlatform.general];
 
   @override
-  List<Property> get properties => [isDarkMode, counterScaler, name];
-
-  @override
-  List<Scenario<Enum>>? get scenarios => null;
+  List<BaseProperty> get properties => [isDarkMode, counterScaler, name];
 
   ...
 
-  static Property<bool> isDarkMode = const Property(
+  static const Property<bool> isDarkMode = const Property(
     defaultValue: false,
     id: 'isDarkMode',
     isLocalStored: true,
   );
 
-  static Property<int> counterScaler = const Property(
+  static const Property<int> counterScaler = const Property(
     defaultValue: 1,
     id: 'counterScaler',
     isLocalStored: false,
   );
 
-  static Property<String> name = const Property(
+  static const Property<String> name = const Property(
     defaultValue: "John",
     id: 'name',
     isLocalStored: false,
@@ -596,7 +578,7 @@ class MyConfig1 extends ConfigModel {
 
   ...
 
-  static Property<String> name = const Property(
+  static const Property<String> name = const Property(
     defaultValue: "John",
     id: 'name',
     isLocalStored: false,
@@ -607,7 +589,7 @@ class MyConfig2 extends ConfigModel {
 
   ...
 
-  static Property<String> name = const Property(
+  static const Property<String> name = const Property(
     defaultValue: "Test user",
     id: 'name',
     isLocalStored: false,
@@ -681,6 +663,60 @@ runApp(
       },
     ),
   );
+```
+
+## Migration from 0.2.1 to 0.3.0
+
+Scenarios stopped existing separately. Now these are the same properties and only one field is needed to group all the properties together. The settings management system will do everything for you. And now the `Scenario` are called `EnumProperty`. You can see an example below:
+
+Before:
+
+```dart
+class GeneralSettings extends SettingsModel {
+  @override
+  List<Property> get properties => [isDarkMode, counterScaler];
+
+  @override
+  List<Scenario<Enum>>? get scenarios => [themeMode];
+
+  static const Property<bool> isDarkMode = Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: false,
+  );
+
+  static const Property<int> counterScaler =
+      Property(defaultValue: 1, id: 'counterScaler');
+
+  static Scenario<ThemeMode> themeMode = Scenario(
+      actions: ThemeMode.values,
+      defaultValue: ThemeMode.dark,
+      isLocalStored: true);
+}
+```
+
+After:
+
+```dart
+class GeneralSettings extends SettingsModel {
+  @override
+  List<BaseProperty> get properties => [isDarkMode, counterScaler, themeMode];
+
+  static const Property<bool> isDarkMode = Property(
+    defaultValue: false,
+    id: 'isDarkMode',
+    isLocalStored: false,
+  );
+
+  static const Property<int> counterScaler =
+      Property(defaultValue: 1, id: 'counterScaler');
+
+  static const EnumProperty<ThemeMode> themeMode = const EnumProperty(
+      id: 'themeMode',
+      values: ThemeMode.values,
+      defaultValue: ThemeMode.dark,
+      isLocalStored: true);
+}
 ```
 
 ## Additional information

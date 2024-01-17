@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../helpers/storage_interface.dart';
+import '../interfaces/storage_interface.dart';
 
 class SharedPrefStorage implements ISettingsStorage {
   late SharedPreferences _storage;
@@ -47,9 +49,9 @@ class SharedPrefStorage implements ISettingsStorage {
   }
 
   @override
-  T? getSetting<T>(String id, Object defaultValue) {
+  FutureOr<T?> getSetting<T>(String id, Object defaultValue) async {
     Function callback = _getSharedPreferencesCallback(defaultValue.runtimeType);
-    T? data = callback(id);
+    FutureOr<T?> data = callback(id);
     return data;
   }
 
@@ -65,7 +67,7 @@ class SharedPrefStorage implements ISettingsStorage {
   }
 
   @override
-  bool isContains(String id) {
+  FutureOr<bool> isContains(String id) {
     bool isContains = _storage.containsKey(id);
     return isContains;
   }

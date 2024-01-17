@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
+import 'package:settings_provider/src/helpers/exceptions.dart';
+import 'package:settings_provider/src/storages/storage.dart';
 
-import 'helpers/settings_controller_interface.dart';
-import 'helpers/storage_interface.dart';
+import 'interfaces/settings_controller_interface.dart';
+import 'interfaces/storage_interface.dart';
 import 'properties/base/property.dart';
 import 'property_converter.dart';
 import 'settings_controller.dart';
@@ -121,40 +123,41 @@ class SettingsNotifier<T extends BaseSettingsModel>
 /// and notify listeners via `ChangeNotifier`
 abstract class SettingsModel extends BaseSettingsModel {
   List<BaseProperty> get properties;
-  List<ISettingsStorage>? get settingsStorages => null;
+  List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
 
   @override
-  PropertyConverter get propertyConverter => _converter;
+  PropertyConverter get converter => _converter;
 
   @override
   ISettingsController get controller => _controller;
 
+  @override
+  SettingsStorage get storage => _storage;
+
   late final SettingsController _controller;
-  late final PropertyConverter _converter;
+  final PropertyConverter _converter = PropertyConverter();
+  final SettingsStorage _storage = SettingsStorage.getInstance();
 
   bool _isInited = false;
   bool get isInited => _isInited;
 
-  Future<bool> init() async {
+  Future<void> init() async {
     try {
-      _converter = PropertyConverter();
-      /* _converter.registerConverter(
-        converter: EnumPropertyConverter(),
-        propertyTypeID: 'EnumProperty',
-      ); */
+      if (_storage.isNotInited) {
+        await _storage.init();
+      }
 
       _controller = await SettingsController.consist(
+        converter: _converter,
         properties: properties,
         prefix: id,
-        storages: settingsStorages,
-        converter: _converter,
+        storages: storages,
       );
 
       _isInited = true;
-      return true;
     } catch (e) {
-      return false;
+      throw InitializationError(model: runtimeType.toString());
     }
   }
 
@@ -195,8 +198,9 @@ abstract class BaseSettingsModel extends ChangeNotifier
     implements ISettingsController {
   BaseSettingsModel();
 
-  PropertyConverter get propertyConverter;
+  PropertyConverter get converter;
   ISettingsController get controller;
+  SettingsStorage get storage;
 }
 
 /// Need to provide Settings in MultiSettings. A class that helps to nest `SettingsNotifier` inside each other
