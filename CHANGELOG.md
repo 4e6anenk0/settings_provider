@@ -31,3 +31,10 @@
 * Now, to create settings, it is mandatory to create a class based on `SettingsModel()` for settings or a class based on `ConfigModel()` for configs. The type of this class must be specified when accessing settings through context methods.
 * Thanks to standardization, `ScenarioBuilder()` can now be used in both configs and regular settings.
 * A bug with local saving of Scenario properties has been fixed.
+
+## 0.3.0
+
+* Transition to a new architecture; For migration from version 0.2.1 -> 0.3.0 see information at [link](https://github.com/4e6anenk0/settings_provider?tab=readme-ov-file#migration-from-021-to-030);
+* Now Scenarios are replaced by EnumProperty and are properties of BaseProperty;
+* The architecture provides the ability to add your own properties and storages;
+* Some bug fixes and improvements.
