@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:collection';
+
+import 'package:settings_provider/src/properties/theme/theme_property.dart';
 
 import 'helpers/exceptions.dart';
 import 'interfaces/converter_interface.dart';
@@ -109,6 +112,12 @@ class SettingsController implements ISettingsController {
   /// A list of converted properties to the Property type
   final List<Property> _adaptedProperties = [];
 
+  final HashMap<String, Property> _localProperties = HashMap();
+
+  final HashMap<String, Property> _sessionProperties = HashMap();
+
+  final HashMap<String, ThemeProperty> _themeProperties = HashMap();
+
   /// Adds a prefix to the settings keys.
   ///
   /// This is necessary in order to be able to use settings in projects with an
@@ -136,7 +145,7 @@ class SettingsController implements ISettingsController {
   /// You can think of this as a data dump of the current list of configuration options.
   /// And _snapshot is a dump of the previous configuration options. The key parameters
   /// are defined through the id parameter in the properties
-  final Map<String, String> _keysMap = {};
+  //HashMap<String, String> _keysMap = HashMap();
 
   final bool _isDebug;
 
@@ -155,72 +164,146 @@ class SettingsController implements ISettingsController {
     }
 
     if (_properties != null) {
-      _storage.makePrefixedKeysDump(_properties!);
-      _storage.makePrefixedKeyDump(_snapshot);
+      //_storage.makePrefixedKeysDump(_properties!);
 
-      _adaptingProperties(_properties!);
+      //_propertyPreprocessing(_properties!);
 
-      if (await _storage.isContains(_snapshot.id)) {
-        List<String> snapshotData =
-            await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
-        _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
+      await _restoreSnapshot();
+
+      if (_properties != null) {
+        _separateProperties(_properties!);
+        await _initSettingsMap(_properties!);
       }
-
-      await _initSettingsMap(_adaptedProperties);
     }
     _isInited = true;
   }
 
-  void _adaptingProperties(List<BaseProperty> properties) {
-    for (BaseProperty property in properties) {
-      _adaptedProperties.add(_converter.convertTo(property));
+  Future<void> _restoreSnapshot() async {
+    if (await _storage.isContains(_snapshot.id)) {
+      List<String> snapshotData =
+          await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
+      _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
     }
   }
+
+/*   void _propertyPreprocessing(List<BaseProperty> properties) {
+    _storage.makePrefixedKeyDump(_snapshot);
+
+    for (BaseProperty property in properties) {
+      _adaptedProperties.add(_converter.convertTo(property));
+      _storage.makePrefixedKeyDump(property);
+    }
+  } */
 
   void updateSettings() async {
     var snapshotData =
         await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
     _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
-    await _initSettingsMap(_adaptedProperties);
+    await _initSettingsMap(_properties!);
   }
 
-  bool isUniqueID(String id) {
+/*   bool isUniqueID(String id) {
     if (_keysMap.containsKey(id)) {
       return false;
     }
     return true;
+  } */
+
+  bool _isAllUnique(List<BaseProperty> properties) {
+    final Set<String> uniqueIds = {};
+    for (BaseProperty property in properties) {
+      uniqueIds.add(property.id);
+    }
+    if (uniqueIds.length != properties.length) {
+      //throw NotUniqueIdExeption(message: "A non-unique ID was passed");
+      return false;
+    } else {
+      return true;
+    }
   }
 
-  Future<void> _initSettingsMap(List<Property> properties) async {
-    for (Property property in properties) {
-      if (!isUniqueID(property.id)) {
-        throw NotUniqueIdExeption(
-            "A non-unique ID (${property.id}) in the property was passed",
-            property.id);
+  void _separateProperties(List<BaseProperty> properties) {
+    for (BaseProperty property in properties) {
+      if (property is ThemeProperty) {
+        _themeProperties[property.id] = property;
       }
+      if (property.isLocalStored) {
+        _localProperties[property.id] = _converter.convertTo(property);
+      } else {
+        _sessionProperties[property.id] = _converter.convertTo(property);
+      }
+    }
+  }
+
+  Future<void> _initSettingsMap(List<BaseProperty> properties) async {
+    /* if (!_isAllUnique(properties)) {
+      throw NotUniqueIdExeption(message: "A non-unique ID was passed");
+    } */
+    assert(_isAllUnique(properties), "A non-unique ID was passed");
+
+    /* for (BaseProperty property in properties) {
+      /* if (!isUniqueID(property.id)) {
+        throw NotUniqueIdExeption(
+          message:
+              "A non-unique ID (${property.id}) in the property was passed",
+          id: property.id,
+        );
+      } */
+
+      //var adaptedProperty = _converter.convertTo(property);
+      //_adaptedProperties.add(adaptedProperty);
+      _storage.makePrefixedKeyDump(property);
 
       _keysMap[property.id] =
           _storage.getPrefixedKey(property.id) ?? "$_prefix${property.id}";
 
-      if (property.isLocalStored) {
-        if (_snapshot.defaultValue.isEmpty) {
-          await _initSetting(property);
+      /* if (property.isLocalStored) {
+        if (_snapshot.defaultValue.isNotEmpty &&
+            _snapshot.defaultValue.contains(_keysMap[property.id])) {
+          await _restoreSetting(property);
         } else {
-          if (_snapshot.defaultValue.contains(_keysMap[property.id])) {
-            await _restoreSetting(property);
-          } else {
-            await _initSetting(property);
-          }
+          await _initSetting(property);
         }
       } else {
         _session.set(property);
-      }
-    }
+      } */
+    } */
+
+    //_storage.makePrefixedKeysDump(properties);
+    //_keysMap = _storage.getPrefixedKeys();
+
+    await _setLocalSettings(_localProperties.values.toList());
+
+    _setSessionSettings(_sessionProperties.values.toList());
 
     await clearCache();
 
-    await _makeSettingsSnapshot(properties);
+    await _makeSettingsSnapshot();
   }
+
+  void _setSessionSettings(List<Property> sessionProperties) {
+    for (Property property in sessionProperties) {
+      _session.set(property);
+    }
+  }
+
+  FutureOr<void> _setLocalSettings(List<Property> localProperties) async {
+    for (Property property in localProperties) {
+      if (_snapshot.defaultValue.isNotEmpty &&
+          _snapshot.defaultValue.contains(_storage.prefixed(property))) {
+        await _restoreSetting(property);
+      } else {
+        await _initSetting(property);
+      }
+      //await _restoreSetting(property);
+    }
+  }
+
+  /*  Future<void> _initLocalSettings(List<Property> localProperties) async {
+    for (Property property in localProperties) {
+      await _initSetting(property);
+    }
+  } */
 
   /// Method to restore data from local storage
   FutureOr<void> _restoreSetting(Property property) async {
@@ -237,12 +320,10 @@ class SettingsController implements ISettingsController {
   /// Method to create a snapshot.
   ///
   /// The snapshot allows you to clear the local storage
-  Future<void> _makeSettingsSnapshot(List<Property> propertyes) async {
+  Future<void> _makeSettingsSnapshot() async {
     List<String> keysList = [];
-    for (Property property in propertyes) {
-      if (property.isLocalStored) {
-        keysList.add(_keysMap[property.id]!);
-      }
+    for (Property property in _localProperties.values) {
+      keysList.add(_storage.prefixed(property));
     }
     Property snapshotProperty = _snapshot.copyWith(defaultValue: keysList);
     await _storage.setSetting(
@@ -260,7 +341,7 @@ class SettingsController implements ISettingsController {
       Future.forEach(snapshot, (key) {
         // if the key is in the list of current keys,
         // then there is no need to delete in settings, it is still actuality
-        if (!_keysMap.containsKey(key)) {
+        if (_storage.isNotPrefixedKey(key)) {
           Future.value(_storage.removeSetting(key));
         }
       });

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import '../interfaces/storage_interface.dart';
 import '../properties/base/property.dart';
@@ -128,7 +129,7 @@ class StorageOverlay {
 
   final Type _bind;
 
-  final Map<String, String> _keysDump = {};
+  final HashMap<String, String> _keysDump = HashMap();
 
   late String Function(String name) _name;
 
@@ -140,7 +141,7 @@ class StorageOverlay {
     }
   }
 
-  void makePrefixedKeysDump(List<BaseProperty> properties) {
+/*   void makePrefixedKeysDump(List<BaseProperty> properties) {
     for (BaseProperty property in properties) {
       _keysDump[property.id] = _name(property.id);
     }
@@ -154,8 +155,25 @@ class StorageOverlay {
     return _keysDump[id];
   }
 
-  Map<String, String> getPrefixedKeys() {
+  HashMap<String, String> getPrefixedKeys() {
     return _keysDump;
+  } */
+
+  bool isPrefixedKey(String key) {
+    return _keysDump.containsKey(key);
+  }
+
+  bool isNotPrefixedKey(String key) {
+    return !_keysDump.containsKey(key);
+  }
+
+  String prefixed(BaseProperty property) {
+    if (!_keysDump.containsKey(property.id)) {
+      var name = _name(property.id);
+      _keysDump[property.id] = name;
+      return name;
+    }
+    return _keysDump[property.id]!;
   }
 
   Future<void> clear() async {
