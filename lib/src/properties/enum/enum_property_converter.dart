@@ -1,3 +1,5 @@
+import 'package:settings_provider/src/helpers/exceptions.dart';
+
 import '../../interfaces/converter_interface.dart';
 import '../base/property.dart';
 import 'enum_property.dart';
@@ -13,8 +15,12 @@ class EnumPropertyConverter implements IPropertyConverter<EnumProperty> {
 
   @override
   EnumProperty<Enum> convertFrom<V>(V value, BaseProperty targetProperty) {
-    var parsed = _parse(targetProperty as EnumProperty);
-    return targetProperty.copyWith(defaultValue: parsed[value]);
+    if (targetProperty is EnumProperty) {
+      var parsed = _parse(targetProperty);
+      return targetProperty.copyWith(defaultValue: parsed[value]);
+    } else {
+      throw AdapterExeption('Cannot convert value for invalid type!');
+    }
   }
 
   @override

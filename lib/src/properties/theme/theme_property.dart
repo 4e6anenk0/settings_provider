@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
 class ThemeProperty<T extends ThemeData> extends BaseProperty<T> {
-  ThemeProperty({
+  const ThemeProperty({
     required super.defaultValue,
     required super.id,
     bool? isLocalStored,
   }) : super(isLocalStored: isLocalStored ?? false);
 
-    ThemeProperty<T> copyWith({
+  ThemeProperty<T> copyWith({
     T? defaultValue,
     bool? isLocalStored,
   }) {

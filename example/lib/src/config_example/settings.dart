@@ -6,12 +6,8 @@ class GeneralConfig extends ConfigModel {
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
   @override
-  List<BaseProperty> get properties => [
-        isDarkMode,
-        counterScaler,
-        name,
-        themeMode,
-      ];
+  List<BaseProperty> get properties =>
+      [isDarkMode, counterScaler, name, themeMode, lightTheme, darkTheme];
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -36,6 +32,12 @@ class GeneralConfig extends ConfigModel {
       values: ThemeMode.values,
       defaultValue: ThemeMode.dark,
       isLocalStored: true);
+
+  static ThemeProperty lightTheme =
+      ThemeProperty(defaultValue: ThemeData.light(), id: 'lightTheme');
+
+  static ThemeProperty darkTheme =
+      ThemeProperty(defaultValue: ThemeData.dark(), id: 'darkTheme');
 }
 
 class WebConfig extends ConfigModel {

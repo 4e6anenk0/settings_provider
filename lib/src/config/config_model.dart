@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../settings_provider.dart';
 import '../helpers/exceptions.dart';
 import '../interfaces/settings_controller_interface.dart';

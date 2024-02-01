@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 import 'package:settings_provider/src/helpers/exceptions.dart';
@@ -125,6 +127,7 @@ abstract class SettingsModel extends BaseSettingsModel {
   List<BaseProperty> get properties;
   List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
+  bool get isDebug => false;
 
   @override
   PropertyConverter get converter => _converter;
@@ -134,6 +137,8 @@ abstract class SettingsModel extends BaseSettingsModel {
 
   @override
   SettingsStorage get storage => _storage;
+
+  //set isDebug(bool val) => _isDebug = val;
 
   late final SettingsController _controller;
   final PropertyConverter _converter = PropertyConverter();
@@ -153,6 +158,7 @@ abstract class SettingsModel extends BaseSettingsModel {
         properties: properties,
         prefix: id,
         storages: storages,
+        isDebug: isDebug,
       );
 
       _isInited = true;

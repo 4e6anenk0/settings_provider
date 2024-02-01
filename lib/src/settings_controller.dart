@@ -3,7 +3,6 @@ import 'dart:collection';
 
 import 'package:settings_provider/src/properties/theme/theme_property.dart';
 
-import 'helpers/exceptions.dart';
 import 'interfaces/converter_interface.dart';
 import 'interfaces/settings_controller_interface.dart';
 import 'properties/base/property.dart';
@@ -116,8 +115,6 @@ class SettingsController implements ISettingsController {
 
   final HashMap<String, Property> _sessionProperties = HashMap();
 
-  final HashMap<String, ThemeProperty> _themeProperties = HashMap();
-
   /// Adds a prefix to the settings keys.
   ///
   /// This is necessary in order to be able to use settings in projects with an
@@ -139,14 +136,6 @@ class SettingsController implements ISettingsController {
 
   final PropertySession _session = PropertySession();
 
-  /// A utility parameter for aggregating new keys that represent
-  /// the future view of the _snapshot parameter.
-  ///
-  /// You can think of this as a data dump of the current list of configuration options.
-  /// And _snapshot is a dump of the previous configuration options. The key parameters
-  /// are defined through the id parameter in the properties
-  //HashMap<String, String> _keysMap = HashMap();
-
   final bool _isDebug;
 
   Future<void> init() async {
@@ -164,15 +153,11 @@ class SettingsController implements ISettingsController {
     }
 
     if (_properties != null) {
-      //_storage.makePrefixedKeysDump(_properties!);
-
-      //_propertyPreprocessing(_properties!);
-
       await _restoreSnapshot();
 
       if (_properties != null) {
         _separateProperties(_properties!);
-        await _initSettingsMap(_properties!);
+        await _initSettings(_properties!);
       }
     }
     _isInited = true;
@@ -186,28 +171,12 @@ class SettingsController implements ISettingsController {
     }
   }
 
-/*   void _propertyPreprocessing(List<BaseProperty> properties) {
-    _storage.makePrefixedKeyDump(_snapshot);
-
-    for (BaseProperty property in properties) {
-      _adaptedProperties.add(_converter.convertTo(property));
-      _storage.makePrefixedKeyDump(property);
-    }
-  } */
-
   void updateSettings() async {
     var snapshotData =
         await _storage.getSetting(_snapshot.id, _snapshot.defaultValue);
     _snapshot = _snapshot.copyWith(defaultValue: snapshotData);
-    await _initSettingsMap(_properties!);
+    await _initSettings(_properties!);
   }
-
-/*   bool isUniqueID(String id) {
-    if (_keysMap.containsKey(id)) {
-      return false;
-    }
-    return true;
-  } */
 
   bool _isAllUnique(List<BaseProperty> properties) {
     final Set<String> uniqueIds = {};
@@ -215,7 +184,6 @@ class SettingsController implements ISettingsController {
       uniqueIds.add(property.id);
     }
     if (uniqueIds.length != properties.length) {
-      //throw NotUniqueIdExeption(message: "A non-unique ID was passed");
       return false;
     } else {
       return true;
@@ -224,9 +192,9 @@ class SettingsController implements ISettingsController {
 
   void _separateProperties(List<BaseProperty> properties) {
     for (BaseProperty property in properties) {
-      if (property is ThemeProperty) {
+/*       if (property is ThemeProperty) {
         _themeProperties[property.id] = property;
-      }
+      } */
       if (property.isLocalStored) {
         _localProperties[property.id] = _converter.convertTo(property);
       } else {
@@ -235,49 +203,12 @@ class SettingsController implements ISettingsController {
     }
   }
 
-  Future<void> _initSettingsMap(List<BaseProperty> properties) async {
-    /* if (!_isAllUnique(properties)) {
-      throw NotUniqueIdExeption(message: "A non-unique ID was passed");
-    } */
+  Future<void> _initSettings(List<BaseProperty> properties) async {
     assert(_isAllUnique(properties), "A non-unique ID was passed");
 
-    /* for (BaseProperty property in properties) {
-      /* if (!isUniqueID(property.id)) {
-        throw NotUniqueIdExeption(
-          message:
-              "A non-unique ID (${property.id}) in the property was passed",
-          id: property.id,
-        );
-      } */
-
-      //var adaptedProperty = _converter.convertTo(property);
-      //_adaptedProperties.add(adaptedProperty);
-      _storage.makePrefixedKeyDump(property);
-
-      _keysMap[property.id] =
-          _storage.getPrefixedKey(property.id) ?? "$_prefix${property.id}";
-
-      /* if (property.isLocalStored) {
-        if (_snapshot.defaultValue.isNotEmpty &&
-            _snapshot.defaultValue.contains(_keysMap[property.id])) {
-          await _restoreSetting(property);
-        } else {
-          await _initSetting(property);
-        }
-      } else {
-        _session.set(property);
-      } */
-    } */
-
-    //_storage.makePrefixedKeysDump(properties);
-    //_keysMap = _storage.getPrefixedKeys();
-
     await _setLocalSettings(_localProperties.values.toList());
-
     _setSessionSettings(_sessionProperties.values.toList());
-
     await clearCache();
-
     await _makeSettingsSnapshot();
   }
 
@@ -295,15 +226,8 @@ class SettingsController implements ISettingsController {
       } else {
         await _initSetting(property);
       }
-      //await _restoreSetting(property);
     }
   }
-
-  /*  Future<void> _initLocalSettings(List<Property> localProperties) async {
-    for (Property property in localProperties) {
-      await _initSetting(property);
-    }
-  } */
 
   /// Method to restore data from local storage
   FutureOr<void> _restoreSetting(Property property) async {

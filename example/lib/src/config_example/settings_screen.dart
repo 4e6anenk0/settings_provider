@@ -20,10 +20,64 @@ class SettingsScreen extends StatelessWidget {
             DarkModeSetting(),
             CounterScalerSettings(),
             SizedBox(height: 20),
-            ThemeModeSetting()
+            ThemeModeSetting(),
+            ThemeSwitcher()
           ],
         ),
       ),
+    );
+  }
+}
+
+class ThemeSwitcher extends StatefulWidget {
+  const ThemeSwitcher({super.key});
+
+  @override
+  State<ThemeSwitcher> createState() => _ThemeSwitcherState();
+}
+
+class _ThemeSwitcherState extends State<ThemeSwitcher> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.theater_comedy_sharp),
+        const SizedBox(
+          width: 20,
+        ),
+        const Expanded(
+          flex: 4,
+          child: Text('Theme mode'),
+        ),
+        PopupMenuButton(
+          initialValue: context
+              .listenSetting<GeneralConfig>()
+              .get(GeneralConfig.themeMode),
+          onSelected: (color) {
+            context.setting<GeneralConfig>().update(GeneralConfig.darkTheme
+                .copyWith(
+                    defaultValue: ThemeData.dark().copyWith(
+                        buttonTheme: ButtonThemeData(
+                            buttonColor: color as MaterialColor))));
+          },
+          itemBuilder: (context) => const [
+            PopupMenuItem(
+              value: Colors.red,
+              child: Text('Красна тема'),
+            ),
+            PopupMenuItem(
+              value: Colors.pink,
+              child: Text('Рожева тема'),
+            ),
+            PopupMenuItem(
+              value: Colors.blue,
+              child: Text('Синя тема'),
+            ),
+          ],
+          child:
+              const Row(children: [Text('Тема'), Icon(Icons.arrow_drop_down)]),
+        )
+      ],
     );
   }
 }

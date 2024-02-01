@@ -1,8 +1,9 @@
 abstract class BaseProperty<T> {
-  const BaseProperty(
-      {required this.defaultValue,
-      required this.id,
-      required this.isLocalStored});
+  const BaseProperty({
+    required this.defaultValue,
+    required this.id,
+    required this.isLocalStored,
+  });
 
   String get type;
 
@@ -47,7 +48,8 @@ class Property<T> extends BaseProperty<T> {
   /// of our application and change the values in the settings by passing the copied data
   /// with the changes there. This will reduce the risk of error, because otherwise,
   /// we would need to create almost identical objects
-  Property<T> copyWith({T? defaultValue, bool? isLocalStored}) {
+  Property<T> copyWith(
+      {T? defaultValue, bool? isLocalStored, bool? isLazyLoad}) {
     return Property(
       defaultValue: defaultValue ?? this.defaultValue,
       id: id,

@@ -5,6 +5,9 @@ class HomeScreenSettings extends SettingsModel {
   @override
   List<Property> get properties => [isDarkMode, counterScaler];
 
+  @override
+  bool get isDebug => false;
+
   static const Property<bool> isDarkMode = Property(
     defaultValue: false,
     id: 'isDarkMode',
@@ -12,7 +15,7 @@ class HomeScreenSettings extends SettingsModel {
   );
 
   static const Property<int> counterScaler =
-      Property(defaultValue: 1, id: 'counterScaler');
+      Property(defaultValue: 1, id: 'counterScaler', isLocalStored: true);
 }
 
 // A separate model for personal screen settings
