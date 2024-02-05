@@ -232,7 +232,11 @@ class SettingsController implements ISettingsController {
   /// Method to restore data from local storage
   FutureOr<void> _restoreSetting(Property property) async {
     var value = await _storage.getSetting(property.id, property.defaultValue);
-    _session.setFromValue(value: value, id: property.id);
+    if (value == null) {
+      await _initSetting(property);
+    } else {
+      _session.setFromValue(value: value, id: property.id);
+    }
   }
 
   /// Method for setting data to local storage

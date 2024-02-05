@@ -1,3 +1,4 @@
+import 'package:example/src/config_example/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
             CounterScalerSettings(),
             SizedBox(height: 20),
             ThemeModeSetting(),
+            SizedBox(height: 20),
             ThemeSwitcher()
           ],
         ),
@@ -37,6 +39,48 @@ class ThemeSwitcher extends StatefulWidget {
 }
 
 class _ThemeSwitcherState extends State<ThemeSwitcher> {
+  late ITheme defaultTheme;
+
+  final List<ITheme> themes = [
+    CustomTheme(light: pinkLightTheme, dark: pinkDarkTheme),
+    CustomTheme(light: greenLightTheme, dark: greenDarkTheme),
+  ];
+/*   int initialValue = 1;
+
+  void selectTheme(int themeID, BuildContext context) {
+    if (themeID == 1) {
+      context.setting<GeneralConfig>().update(GeneralConfig.theme);
+      context.setting<GeneralConfig>().update(GeneralConfig.darkTheme);
+    } else if (themeID == 2) {
+      context
+          .setting<GeneralConfig>()
+          .update(GeneralConfig.theme.copyWith(defaultValue: pinkLightTheme));
+      context.setting<GeneralConfig>().update(
+          GeneralConfig.darkTheme.copyWith(defaultValue: pinkDarkTheme));
+    } else if (themeID == 3) {
+      context
+          .setting<GeneralConfig>()
+          .update(GeneralConfig.theme.copyWith(defaultValue: greenLightTheme));
+      context.setting<GeneralConfig>().update(
+          GeneralConfig.darkTheme.copyWith(defaultValue: greenDarkTheme));
+    } else {
+      return;
+    }
+  } */
+
+/*   @override
+  void initState() {}
+ */
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    var initialLight =
+        context.listenSetting<GeneralConfig>().get(GeneralConfig.theme);
+    var initialDark =
+        context.listenSetting<GeneralConfig>().get(GeneralConfig.darkTheme);
+    defaultTheme = CustomTheme(light: initialLight, dark: initialDark);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -47,31 +91,29 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
         ),
         const Expanded(
           flex: 4,
-          child: Text('Theme mode'),
+          child: Text('Theme'),
         ),
         PopupMenuButton(
-          initialValue: context
-              .listenSetting<GeneralConfig>()
-              .get(GeneralConfig.themeMode),
-          onSelected: (color) {
-            context.setting<GeneralConfig>().update(GeneralConfig.darkTheme
-                .copyWith(
-                    defaultValue: ThemeData.dark().copyWith(
-                        buttonTheme: ButtonThemeData(
-                            buttonColor: color as MaterialColor))));
+          initialValue: defaultTheme,
+          onSelected: (theme) {
+            context.setting<GeneralConfig>().update(
+                GeneralConfig.theme.copyWith(defaultValue: theme.light));
+            context
+                .setting<GeneralConfig>()
+                .update(GeneralConfig.theme.copyWith(defaultValue: theme.dark));
           },
-          itemBuilder: (context) => const [
+          itemBuilder: (context) => [
             PopupMenuItem(
-              value: Colors.red,
-              child: Text('Красна тема'),
+              value: defaultTheme,
+              child: const Text('Default'),
             ),
             PopupMenuItem(
-              value: Colors.pink,
-              child: Text('Рожева тема'),
+              value: themes[0],
+              child: Text('Pink theme'),
             ),
             PopupMenuItem(
-              value: Colors.blue,
-              child: Text('Синя тема'),
+              value: themes[1],
+              child: Text('Green theme'),
             ),
           ],
           child:

@@ -24,7 +24,9 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
 
   @override
   Property convertTo(ThemeProperty<ThemeData> targetProperty) {
-    themes[targetProperty.id] = targetProperty.defaultValue;
+    if (!themes.containsKey(targetProperty.id)) {
+      themes[targetProperty.id] = targetProperty.defaultValue;
+    }
     return Property(
         defaultValue: targetProperty.id,
         id: targetProperty.id,

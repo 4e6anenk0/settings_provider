@@ -18,9 +18,8 @@ class ConfigApp extends StatelessWidget {
           initialRoute: '/',
           //theme: ThemeData(),
           //darkTheme: ThemeData.dark(),
-          theme: context
-              .listenSetting<GeneralConfig>()
-              .get(GeneralConfig.lightTheme),
+          theme:
+              context.listenSetting<GeneralConfig>().get(GeneralConfig.theme),
           darkTheme: context
               .listenSetting<GeneralConfig>()
               .get(GeneralConfig.darkTheme),
