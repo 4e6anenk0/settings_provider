@@ -12,8 +12,6 @@ void main() async {
 
   await generalSettings.init();
 
-  //await generalSettings.init();
-
   runApp(
     Settings(
       model: generalSettings,

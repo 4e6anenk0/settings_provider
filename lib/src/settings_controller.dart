@@ -121,16 +121,11 @@ class SettingsController implements ISettingsController {
   /// final bool _usePrefix;
   final String? _prefix;
 
-  /// /// snapshot is used for initialization to analyze fields already saved
+  /// snapshot is used for initialization to analyze fields already saved
   /// in local storage and restore it, otherwise save new unsaved settings and
   /// remove the unnecessary ones.
   Property<List<String>> _snapshot =
       const Property(defaultValue: [], id: 'Snapshot', isLocalStored: true);
-
-  /// utility parameter to initialize data
-  /// with less overhead than directly modifying immutable data in `SettingData`
-  // final Map<String, Object> _sessionSettings = {};
-  //final HashMap<String, Object> _sessionSettings = HashMap();
 
   final PropertySession _session = PropertySession();
 
@@ -190,9 +185,6 @@ class SettingsController implements ISettingsController {
 
   void _separateProperties(List<BaseProperty> properties) {
     for (BaseProperty property in properties) {
-/*       if (property is ThemeProperty) {
-        _themeProperties[property.id] = property;
-      } */
       if (property.isLocalStored) {
         _localProperties[property.id] = _converter.convertTo(property);
       } else {

@@ -141,24 +141,6 @@ class StorageOverlay {
     }
   }
 
-/*   void makePrefixedKeysDump(List<BaseProperty> properties) {
-    for (BaseProperty property in properties) {
-      _keysDump[property.id] = _name(property.id);
-    }
-  }
-
-  void makePrefixedKeyDump(BaseProperty property) {
-    _keysDump[property.id] = _name(property.id);
-  }
-
-  String? getPrefixedKey(String id) {
-    return _keysDump[id];
-  }
-
-  HashMap<String, String> getPrefixedKeys() {
-    return _keysDump;
-  } */
-
   bool isPrefixedKey(String key) {
     return _keysDump.containsKey(key);
   }

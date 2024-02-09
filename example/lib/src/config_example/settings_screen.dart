@@ -1,4 +1,3 @@
-import 'package:example/src/config_example/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
@@ -21,8 +20,7 @@ class SettingsScreen extends StatelessWidget {
             DarkModeSetting(),
             CounterScalerSettings(),
             SizedBox(height: 20),
-            ThemeModeSetting(),
-            SizedBox(height: 20),
+            ThemeModeSetting()
           ],
         ),
       ),
@@ -38,14 +36,6 @@ class ThemeModeSetting extends StatefulWidget {
 }
 
 class _ThemeModeSettingState extends State<ThemeModeSetting> {
-  //ThemeMode? mode;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    //mode = context.listenSetting(themeMode);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(

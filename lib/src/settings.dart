@@ -138,8 +138,6 @@ abstract class SettingsModel extends BaseSettingsModel {
   @override
   SettingsStorage get storage => _storage;
 
-  //set isDebug(bool val) => _isDebug = val;
-
   late final SettingsController _controller;
   final PropertyConverter _converter = PropertyConverter();
   final SettingsStorage _storage = SettingsStorage.getInstance();
