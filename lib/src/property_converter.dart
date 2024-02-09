@@ -1,5 +1,3 @@
-import 'package:settings_provider/src/properties/theme/theme_property_converter.dart';
-
 import 'interfaces/converter_interface.dart';
 import 'helpers/exceptions.dart';
 import 'properties/base/property.dart';
@@ -8,7 +6,6 @@ import 'properties/enum/enum_property_converter.dart';
 class PropertyConverter implements IPropertyConverter {
   final Map<String, IPropertyConverter> _converters = {
     'EnumProperty': EnumPropertyConverter(),
-    'ThemeProperty': ThemePropertyConverter(),
   };
 
   void registerConverter(

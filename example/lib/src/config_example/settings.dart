@@ -1,3 +1,4 @@
+import 'package:example/src/config_example/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_provider/settings_provider.dart';
 
@@ -7,7 +8,7 @@ class GeneralConfig extends ConfigModel {
 
   @override
   List<BaseProperty> get properties =>
-      [isDarkMode, counterScaler, name, themeMode, theme];
+      [isDarkMode, counterScaler, name, themeMode];
 
   static Property<bool> isDarkMode = const Property(
     defaultValue: false,
@@ -32,12 +33,6 @@ class GeneralConfig extends ConfigModel {
       values: ThemeMode.values,
       defaultValue: ThemeMode.dark,
       isLocalStored: true);
-
-  static ThemeProperty<ThemeData> theme =
-      ThemeProperty(defaultValue: ThemeData.light(), id: 'theme');
-
-  static ThemeProperty<ThemeData> darkTheme =
-      ThemeProperty(defaultValue: ThemeData.dark(), id: 'darkTheme');
 }
 
 class WebConfig extends ConfigModel {

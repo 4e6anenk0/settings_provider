@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
-ThemeData pinkLightTheme =
-    ThemeData(colorScheme: const ColorScheme.light(primary: Colors.pink));
-ThemeData pinkDarkTheme =
-    ThemeData(colorScheme: const ColorScheme.dark(primary: Colors.pink));
+ThemeData pinkLightTheme = ThemeData(
+    colorScheme:
+        const ColorScheme.light(primary: Colors.pink, secondary: Colors.pink));
+ThemeData pinkDarkTheme = ThemeData(
+    colorScheme:
+        const ColorScheme.dark(primary: Colors.pink, secondary: Colors.pink));
 
-ThemeData greenLightTheme =
-    ThemeData(colorScheme: const ColorScheme.light(primary: Colors.green));
-ThemeData greenDarkTheme =
-    ThemeData(colorScheme: const ColorScheme.dark(primary: Colors.green));
+ThemeData greenLightTheme = ThemeData(
+    colorScheme: const ColorScheme.light(
+        primary: Colors.green, secondary: Colors.green));
+ThemeData greenDarkTheme = ThemeData(
+    colorScheme:
+        const ColorScheme.dark(primary: Colors.green, secondary: Colors.green));
 
 abstract interface class ITheme {
   ThemeData get light;

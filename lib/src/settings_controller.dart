@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:settings_provider/src/properties/theme/theme_property.dart';
-
 import 'interfaces/converter_interface.dart';
 import 'interfaces/settings_controller_interface.dart';
 import 'properties/base/property.dart';
