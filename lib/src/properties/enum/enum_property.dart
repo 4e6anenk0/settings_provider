@@ -22,7 +22,6 @@ class EnumProperty<T extends Enum> extends BaseProperty<T> {
     List<T>? values,
     T? defaultValue,
     bool? isLocalStored,
-    bool? isLazyLoad,
   }) {
     return EnumProperty(
       values: values ?? this.values,
