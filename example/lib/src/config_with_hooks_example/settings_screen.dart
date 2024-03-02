@@ -68,11 +68,11 @@ class _ThemeSettingsState extends State<ThemeSettings> {
           },
           itemBuilder: (context) => [
             PopupMenuItem(
-              value: GeneralConfig.orangeTheme.defaultValue,
+              value: GeneralConfig.orangeTheme,
               child: const Text('Orange Theme'),
             ),
             PopupMenuItem(
-              value: GeneralConfig.greenTheme.defaultValue,
+              value: GeneralConfig.greenTheme,
               child: const Text('Green Theme'),
             ),
             PopupMenuItem(

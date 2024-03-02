@@ -59,21 +59,13 @@ class GeneralConfig extends ConfigModel {
   @override
   List<ConfigPlatform> get platforms => [ConfigPlatform.general];
 
-  static ThemeProperty orangeTheme = ThemeProperty(
-      defaultValue: ThemeDesc(
-          lightTheme: ThemeData.from(colorScheme: orangeLightThemeScheme),
-          darkTheme: ThemeData.from(colorScheme: orangeDarkThemeScheme),
-          themeID: 'orangeTheme'),
-      id: 'orangeTheme');
+  @override
+  List<ThemeDesc>? get themes => [
+        orangeTheme,
+        greenTheme,
+      ];
 
-  static ThemeProperty greenTheme = ThemeProperty(
-      defaultValue: ThemeDesc(
-          lightTheme: ThemeData.from(colorScheme: greenLightThemeScheme),
-          darkTheme: ThemeData.from(colorScheme: greenDarkThemeScheme),
-          themeID: 'greenTheme'),
-      id: 'greenTheme');
-
-/*   static ThemeDesc orangeTheme = ThemeDesc(
+  static ThemeDesc orangeTheme = ThemeDesc(
       lightTheme: ThemeData.from(colorScheme: orangeLightThemeScheme),
       darkTheme: ThemeData.from(colorScheme: orangeDarkThemeScheme),
       themeID: 'orangeTheme');
@@ -81,7 +73,7 @@ class GeneralConfig extends ConfigModel {
   static ThemeDesc greenTheme = ThemeDesc(
       lightTheme: ThemeData.from(colorScheme: greenLightThemeScheme),
       darkTheme: ThemeData.from(colorScheme: greenDarkThemeScheme),
-      themeID: 'greenTheme'); */
+      themeID: 'greenTheme');
 
   @override
   List<BaseProperty> get properties => [
@@ -90,8 +82,8 @@ class GeneralConfig extends ConfigModel {
         name,
         themeMode,
         theme,
-        orangeTheme,
-        greenTheme
+        //orangeTheme,
+        //greenTheme
       ];
 
   static Property<bool> isDarkMode = const Property(

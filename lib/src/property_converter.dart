@@ -1,3 +1,4 @@
+import 'package:settings_provider/src/interfaces/settings_controller_interface.dart';
 import 'package:settings_provider/src/properties/theme/theme_property_converter.dart';
 
 import 'interfaces/converter_interface.dart';
@@ -55,5 +56,27 @@ You can't get the adapted controller the from _getAdaptedController method""");
     }
     var converter = getConverter(targetProperty);
     return converter.convertValue(value, targetProperty);
+  }
+
+  @override
+  void clearCache() {
+    for (IPropertyConverter converter in _converters.values) {
+      converter.clearCache();
+    }
+  }
+
+  @override
+  getCache(BaseProperty targetProperty) {
+    IPropertyConverter converter = getConverter(targetProperty);
+    return converter.getCache(targetProperty);
+  }
+
+  @override
+  void preset<V>(
+      {required BaseProperty targetProperty,
+      required String id,
+      required V data}) {
+    IPropertyConverter converter = getConverter(targetProperty);
+    converter.preset(targetProperty: targetProperty, id: id, data: data);
   }
 }

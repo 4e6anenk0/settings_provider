@@ -19,6 +19,7 @@ enum ConfigPlatform {
 
 abstract class ConfigModel extends BaseSettingsModel {
   List<BaseProperty> get properties;
+  List<ThemeDesc>? get themes => null;
   List<ConfigPlatform> get platforms;
   List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
@@ -67,6 +68,14 @@ abstract class ConfigModel extends BaseSettingsModel {
       try {
         if (_storage.isNotInited) {
           await _storage.init();
+        }
+
+        if (themes != null) {
+          //print("Seting the themes");
+          for (ThemeDesc themeDesc in themes!) {
+            converter.preset(
+                targetProperty: theme, id: themeDesc.themeID, data: themeDesc);
+          }
         }
 
         _controller = await SettingsController.consist(
