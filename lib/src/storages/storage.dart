@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import '../properties/theme/theme_property.dart';
 import '../interfaces/storage_interface.dart';
 import '../properties/base/property.dart';
 import '../properties/enum/enum_property.dart';
@@ -24,7 +25,8 @@ class SettingsStorage {
   /// Dependencies of property types and storage that serve them are defined
   final Map<Type, List<Type>> _dependedTypes = {
     Property: [SharedPrefStorage],
-    EnumProperty: [SharedPrefStorage]
+    EnumProperty: [SharedPrefStorage],
+    ThemeProperty: [SharedPrefStorage]
   };
 
   bool _isInited = false;

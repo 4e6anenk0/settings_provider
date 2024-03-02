@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
+import 'package:settings_provider/settings_provider.dart';
 import 'package:settings_provider/src/helpers/exceptions.dart';
 import 'package:settings_provider/src/storages/storage.dart';
-
 import 'interfaces/settings_controller_interface.dart';
-import 'interfaces/storage_interface.dart';
-import 'properties/base/property.dart';
 import 'property_converter.dart';
-import 'settings_controller.dart';
 
 /// Widget for implementing settings in the widget tree. It uses SettingsNotifier
 /// for implementation and SettingsModel for settings change notifications.
@@ -96,10 +93,10 @@ class Settings<T extends BaseSettingsModel> extends StatefulWidget {
   }
 
   @override
-  State<Settings<T>> createState() => _ConfigState<T>();
+  State<Settings<T>> createState() => _SettingsState<T>();
 }
 
-class _ConfigState<T extends BaseSettingsModel> extends State<Settings<T>> {
+class _SettingsState<T extends BaseSettingsModel> extends State<Settings<T>> {
   @override
   Widget build(BuildContext context) {
     return SettingsNotifier(
@@ -137,6 +134,19 @@ abstract class SettingsModel extends BaseSettingsModel {
 
   @override
   SettingsStorage get storage => _storage;
+
+  final ThemeProperty _theme = ThemeProperty(
+    defaultValue: ThemeDesc(
+      lightTheme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeID: 'defaultTheme',
+    ),
+    id: 'defaultTheme',
+    isLocalStored: true,
+  );
+
+  @override
+  ThemeProperty<ThemeDesc> get theme => _theme;
 
   late final SettingsController _controller;
   final PropertyConverter _converter = PropertyConverter();
@@ -205,6 +215,7 @@ abstract class BaseSettingsModel extends ChangeNotifier
   PropertyConverter get converter;
   ISettingsController get controller;
   SettingsStorage get storage;
+  ThemeProperty get theme;
 }
 
 /// Need to provide Settings in MultiSettings. A class that helps to nest `SettingsNotifier` inside each other

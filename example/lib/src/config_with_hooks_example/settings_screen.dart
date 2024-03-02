@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:settings_provider/settings_hooks.dart';
 import 'package:settings_provider/settings_provider.dart';
 
 import 'settings.dart';
@@ -22,9 +23,67 @@ class SettingsScreen extends StatelessWidget {
             SizedBox(height: 20),
             ThemeModeSetting(),
             SizedBox(height: 20),
+            ThemeSettings()
           ],
         ),
       ),
+    );
+  }
+}
+
+class ThemeSettings extends StatefulWidget {
+  const ThemeSettings({super.key});
+
+  @override
+  State<ThemeSettings> createState() => _ThemeSettingsState();
+}
+
+class _ThemeSettingsState extends State<ThemeSettings> {
+  late ThemeDesc _defaultThemeProperty;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _defaultThemeProperty = context
+        .listenSetting<GeneralConfig>()
+        .get(context.themeProperty<GeneralConfig>());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.style),
+        const SizedBox(
+          width: 20,
+        ),
+        const Expanded(
+          flex: 4,
+          child: Text('Choose your preferred dark theme:'),
+        ),
+        PopupMenuButton(
+          initialValue: _defaultThemeProperty,
+          onSelected: (ThemeDesc theme) {
+            context.switchTheme<GeneralConfig>(theme);
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: GeneralConfig.orangeTheme.defaultValue,
+              child: const Text('Orange Theme'),
+            ),
+            PopupMenuItem(
+              value: GeneralConfig.greenTheme.defaultValue,
+              child: const Text('Green Theme'),
+            ),
+            PopupMenuItem(
+              value: context.themeProperty<GeneralConfig>().defaultValue,
+              child: const Text('Default'),
+            ),
+          ],
+          child:
+              const Row(children: [Text('Test'), Icon(Icons.arrow_drop_down)]),
+        )
+      ],
     );
   }
 }
@@ -122,7 +181,7 @@ class _CounterScalerSettingsState extends State<CounterScalerSettings> {
           flex: 1,
           child: TextField(
               controller: _textController,
-              onTapOutside: (event) {
+              onSubmitted: (event) {
                 if (_scaler != 0) {
                   Config.from<GeneralConfig>(context).update(GeneralConfig
                       .counterScaler

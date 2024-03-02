@@ -16,6 +16,16 @@ abstract class BaseProperty<T> {
   /// whether to store configuration values in local storage
   /// `true` - yes, `false` - no
   final bool isLocalStored;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Property &&
+          runtimeType == other.runtimeType &&
+          defaultValue == other.defaultValue;
+
+  @override
+  int get hashCode => defaultValue.hashCode;
 }
 
 /// Class for declarative description of app settings.
@@ -77,4 +87,7 @@ class UIProperty<I, O> extends Property<I> {
       return null;
     }
   }
+
+  @override
+  String get type => 'UIProperty';
 }

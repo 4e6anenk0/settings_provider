@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:settings_provider/src/helpers/extensions.dart';
-import 'package:settings_provider/src/interfaces/settings_controller_interface.dart';
 
+import '../../helpers/extensions.dart';
+import '../../interfaces/settings_controller_interface.dart';
 import '../../settings.dart';
 import 'enum_property.dart';
 

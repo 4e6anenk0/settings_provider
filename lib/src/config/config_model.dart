@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 
 import '../../settings_provider.dart';
 import '../helpers/exceptions.dart';
@@ -37,6 +38,18 @@ abstract class ConfigModel extends BaseSettingsModel {
 
   bool _isInited = false;
   bool get isInited => _isInited;
+
+  final ThemeProperty _theme = ThemeProperty(
+    defaultValue: ThemeDesc(
+        lightTheme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeID: 'defaultTheme'),
+    id: 'defaultTheme',
+    isLocalStored: true,
+  );
+
+  @override
+  ThemeProperty<ThemeDesc> get theme => _theme;
 
   /// A method that checks whether the list of target platforms
   /// has a generic destination type (for all platforms) or a specific destination type
