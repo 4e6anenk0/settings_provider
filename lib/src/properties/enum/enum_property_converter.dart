@@ -1,11 +1,9 @@
-import 'package:settings_provider/src/helpers/exceptions.dart';
-
 import '../../interfaces/converter_interface.dart';
 import '../base/property.dart';
 import 'enum_property.dart';
 
 class EnumPropertyConverter implements IPropertyConverter<EnumProperty> {
-  Map<String, Enum> _parse(EnumProperty<Enum> property) {
+  Map<String, Enum> _parse(EnumProperty property) {
     var parsed = <String, Enum>{};
     for (Enum value in property.values) {
       parsed[value.name] = value;
@@ -33,18 +31,13 @@ class EnumPropertyConverter implements IPropertyConverter<EnumProperty> {
   }
 
   @override
-  EnumProperty<Enum> convertFrom<V>(V value, BaseProperty targetProperty) {
-    if (targetProperty is EnumProperty) {
-      //var parsed = _parse(targetProperty);
-      var parsed = getCache(targetProperty);
-      return targetProperty.copyWith(defaultValue: parsed[value]);
-    } else {
-      throw AdapterExeption('Cannot convert value for invalid type!');
-    }
+  EnumProperty convertFrom<V>(V value, EnumProperty targetProperty) {
+    var cache = getCache(targetProperty);
+    return targetProperty.copyWith(defaultValue: cache[value]);
   }
 
   @override
-  Property convertTo(EnumProperty<Enum> targetProperty) {
+  Property convertTo(EnumProperty targetProperty) {
     return Property(
         defaultValue: targetProperty.defaultValue.name,
         id: targetProperty.id,
@@ -52,15 +45,14 @@ class EnumPropertyConverter implements IPropertyConverter<EnumProperty> {
   }
 
   @override
-  V2 convertValue<V1, V2>(V1 value, BaseProperty targetProperty) {
-    //var parsed = _parse(targetProperty as EnumProperty);
-    var parsed = getCache(targetProperty as EnumProperty);
-    return parsed[value] as V2;
+  V2 convertValue<V1, V2>(V1 value, EnumProperty targetProperty) {
+    var cache = getCache(targetProperty);
+    return cache[value] as V2;
   }
 
   @override
   void preset<V>(
-      {required EnumProperty<Enum> targetProperty,
+      {required EnumProperty targetProperty,
       required String id,
       required V data}) {
     assert(data is Enum);

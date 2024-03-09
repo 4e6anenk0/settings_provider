@@ -44,19 +44,7 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
       return _themes[value]! as V2;
     } else {
       throw AdapterExeption('Theme Property not founded!');
-      //return getCache(targetProperty);
     }
-    /* if (_themes[value] != null) {
-      return _themes[value]! as V2;
-    } else {
-      throw AdapterExeption('Theme Property not founded!');
-    } */
-
-    /* if (_themes[value] != null) {
-      return _themes[value]!.defaultValue as V2;
-    } else {
-      throw AdapterExeption('Theme Property not founded!');
-    } */
   }
 
   @override
@@ -65,7 +53,7 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
   }
 
   @override
-  getCache(ThemeProperty<ThemeDesc> targetProperty) {
+  getCache(ThemeProperty targetProperty) {
     if (_themes[targetProperty.defaultValue.themeID] != null) {
       return _themes[targetProperty.defaultValue.themeID]!;
     } else {
@@ -77,7 +65,7 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
 
   @override
   void preset<V>(
-      {required ThemeProperty<ThemeDesc> targetProperty,
+      {required ThemeProperty targetProperty,
       required String id,
       required V data}) {
     assert(data is ThemeDesc);

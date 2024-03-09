@@ -1,4 +1,3 @@
-import 'package:settings_provider/src/interfaces/settings_controller_interface.dart';
 import 'package:settings_provider/src/properties/theme/theme_property_converter.dart';
 
 import 'interfaces/converter_interface.dart';
@@ -7,11 +6,15 @@ import 'properties/base/property.dart';
 import 'properties/enum/enum_property_converter.dart';
 
 class PropertyConverter implements IPropertyConverter {
+  /// List of registered converters for converting properties
+  /// to the general type of universal properties or the other way around
   final Map<String, IPropertyConverter> _converters = {
     'EnumProperty': EnumPropertyConverter(),
     'ThemeProperty': ThemePropertyConverter(),
   };
 
+  /// A method that will help to register custom converters in an any your projects.
+  /// To do this, use this method in the Config or Settings class before initialization
   void registerConverter({
     required IPropertyConverter converter,
     required String propertyTypeID,
@@ -19,6 +22,7 @@ class PropertyConverter implements IPropertyConverter {
     _converters[propertyTypeID] = converter;
   }
 
+  /// Method to access the appropriate converter based on the type of the passed property
   IPropertyConverter getConverter(BaseProperty property) {
     var adapter = _converters[property.type];
 

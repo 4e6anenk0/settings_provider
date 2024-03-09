@@ -82,8 +82,6 @@ class GeneralConfig extends ConfigModel {
         name,
         themeMode,
         theme,
-        //orangeTheme,
-        //greenTheme
       ];
 
   static Property<bool> isDarkMode = const Property(

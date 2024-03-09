@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:settings_provider/settings_hooks.dart';
+import 'package:settings_provider/theme_hook.dart';
 import 'package:settings_provider/settings_provider.dart';
 
 import 'home_screen.dart';

@@ -74,7 +74,8 @@ class Settings<T extends BaseSettingsModel> extends StatefulWidget {
     SettingsNotifier<T>? provider =
         context.dependOnInheritedWidgetOfExactType<SettingsNotifier<T>>();
     if (provider == null && null is! T) {
-      throw Exception('Not founded provided Settings');
+      throw Exception(
+          'Not founded provided Settings or Config. You may have forgotten to specify the type of settings class from which you are trying to get settings');
     }
     return provider?.notifier as T;
   }
@@ -87,7 +88,8 @@ class Settings<T extends BaseSettingsModel> extends StatefulWidget {
     SettingsNotifier<T>? provider =
         context.getInheritedWidgetOfExactType<SettingsNotifier<T>>();
     if (provider == null && null is! T) {
-      throw Exception('Not founded provided Settings');
+      throw Exception(
+          'Not founded provided Settings or Config. You may have forgotten to specify the type of settings class from which you are trying to get settings');
     }
     return provider?.notifier as T;
   }

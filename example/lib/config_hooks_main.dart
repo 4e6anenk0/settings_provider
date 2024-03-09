@@ -12,6 +12,9 @@ void main() async {
   var webConfig = WebConfig();
 
   await generalConfig.init();
+
+  // This configuration is designed for a specific platform.
+  // It will be initialized only on that platform.
   await webConfig.init();
 
   runApp(

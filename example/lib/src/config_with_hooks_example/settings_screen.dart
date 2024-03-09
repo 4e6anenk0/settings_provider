@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:settings_provider/settings_hooks.dart';
+import 'package:settings_provider/theme_hook.dart';
 import 'package:settings_provider/settings_provider.dart';
 
 import 'settings.dart';
@@ -44,9 +44,10 @@ class _ThemeSettingsState extends State<ThemeSettings> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _defaultThemeProperty = context
+    /* _defaultThemeProperty = context
         .listenSetting<GeneralConfig>()
-        .get(context.themeProperty<GeneralConfig>());
+        .get(context.themeProperty<GeneralConfig>()); */
+    _defaultThemeProperty = context.theme<GeneralConfig>();
   }
 
   @override
@@ -59,7 +60,7 @@ class _ThemeSettingsState extends State<ThemeSettings> {
         ),
         const Expanded(
           flex: 4,
-          child: Text('Choose your preferred dark theme:'),
+          child: Text('Choose your preferred theme style:'),
         ),
         PopupMenuButton(
           initialValue: _defaultThemeProperty,
