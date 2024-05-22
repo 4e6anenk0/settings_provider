@@ -38,3 +38,7 @@
 * Now Scenarios are replaced by EnumProperty and are properties of BaseProperty;
 * The architecture provides the ability to add your own properties and storages;
 * Some bug fixes and improvements.
+
+## 0.3.1
+
+* Fixed defaultTheme setting; now its option.
