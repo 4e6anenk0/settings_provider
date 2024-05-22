@@ -127,6 +127,7 @@ abstract class SettingsModel extends BaseSettingsModel {
   List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
   bool get isDebug => false;
+  ThemeProperty<ThemeDesc>? get defaultTheme => null;
 
   @override
   PropertyConverter get converter => _converter;
@@ -137,18 +138,18 @@ abstract class SettingsModel extends BaseSettingsModel {
   @override
   SettingsStorage get storage => _storage;
 
-  final ThemeProperty _theme = ThemeProperty(
-    defaultValue: ThemeDesc(
-      lightTheme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeID: 'defaultTheme',
-    ),
-    id: 'defaultTheme',
-    isLocalStored: true,
-  );
-
   @override
-  ThemeProperty<ThemeDesc> get theme => _theme;
+  ThemeProperty<ThemeDesc> get theme =>
+      defaultTheme ??
+      ThemeProperty(
+        defaultValue: ThemeDesc(
+          lightTheme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeID: 'defaultTheme',
+        ),
+        id: 'defaultTheme',
+        isLocalStored: true,
+      );
 
   late final SettingsController _controller;
   final PropertyConverter _converter = PropertyConverter();

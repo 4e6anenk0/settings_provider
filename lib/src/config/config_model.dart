@@ -23,6 +23,7 @@ abstract class ConfigModel extends BaseSettingsModel {
   List<ConfigPlatform> get platforms;
   List<ISettingsStorage>? get storages => null;
   String get id => runtimeType.toString();
+  ThemeProperty<ThemeDesc>? get defaultTheme => null;
 
   @override
   PropertyConverter get converter => _converter;
@@ -40,17 +41,18 @@ abstract class ConfigModel extends BaseSettingsModel {
   bool _isInited = false;
   bool get isInited => _isInited;
 
-  final ThemeProperty _theme = ThemeProperty(
-    defaultValue: ThemeDesc(
-        lightTheme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
-        themeID: 'defaultTheme'),
-    id: 'defaultTheme',
-    isLocalStored: true,
-  );
-
   @override
-  ThemeProperty<ThemeDesc> get theme => _theme;
+  ThemeProperty<ThemeDesc> get theme =>
+      defaultTheme ??
+      ThemeProperty(
+        defaultValue: ThemeDesc(
+          lightTheme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeID: 'defaultTheme',
+        ),
+        id: 'defaultTheme',
+        isLocalStored: true,
+      );
 
   /// A method that checks whether the list of target platforms
   /// has a generic destination type (for all platforms) or a specific destination type
