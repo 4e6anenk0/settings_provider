@@ -6,7 +6,7 @@ import 'interfaces/settings_controller_interface.dart';
 import 'properties/base/property.dart';
 import 'property_session.dart';
 import 'storages/sp_storage.dart';
-import 'interfaces/storage_interface.dart';
+import 'storages/storage_interface.dart';
 import 'storages/storage.dart';
 
 /// A controller that allows you to manage immutable settings configuration
@@ -100,8 +100,8 @@ class SettingsController implements ISettingsController {
   late final StorageOverlay _storage;
 
   /// Flag to check initialization status. Required for lazy initialization cases.
-  bool _isInited = false;
-  bool get isInited => _isInited;
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   /// A set of properties that are declarative descriptions of settings parameters.
   final List<BaseProperty>? _properties;
@@ -132,7 +132,7 @@ class SettingsController implements ISettingsController {
   final bool _isDebug;
 
   Future<void> init() async {
-    if (!_isInited) {
+    if (!_isInitialized) {
       await _init();
     }
   }
@@ -153,7 +153,7 @@ class SettingsController implements ISettingsController {
         await _initSettings(_properties!);
       }
     }
-    _isInited = true;
+    _isInitialized = true;
   }
 
   Future<void> _restoreSnapshot() async {
@@ -249,7 +249,7 @@ class SettingsController implements ISettingsController {
   }
 
   /// A method that helps to remove settings that are not in the
-  /// current list of propertyes and clear unused keys dump
+  /// current list of properties and clear unused keys dump
   Future<void> clearCache() async {
     if (await _storage.isContains(_snapshot.id)) {
       // if the snapshot already exists, we get it

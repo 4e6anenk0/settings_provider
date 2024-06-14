@@ -14,13 +14,13 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
       return targetProperty.copyWith(defaultValue: _themes[value]!);
     } else {
       //return getCache(targetProperty);
-      throw AdapterExeption('Theme Property not founded!');
+      throw AdapterException('Theme Property not founded!');
     }
     /* if (_themes[value] != null) {
       //return _themes[targetProperty.defaultValue.themeID]!;
       return targetProperty.copyWith(defaultValue: _themes[value]!);
     } else {
-      throw AdapterExeption('Theme Property not founded!');
+      throw AdapterException('Theme Property not founded!');
     } */
   }
 
@@ -43,7 +43,7 @@ class ThemePropertyConverter implements IPropertyConverter<ThemeProperty> {
     if (_themes[value] != null) {
       return _themes[value]! as V2;
     } else {
-      throw AdapterExeption('Theme Property not founded!');
+      throw AdapterException('Theme Property not founded!');
     }
   }
 

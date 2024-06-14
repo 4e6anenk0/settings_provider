@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../interfaces/storage_interface.dart';
+import '../storage_interface.dart';
 
 class MultiSettingsStorage implements IStorageWorker {
   MultiSettingsStorage({
@@ -27,9 +27,9 @@ class MultiSettingsStorage implements IStorageWorker {
   }
 
   @override
-  FutureOr<T?> getSetting<T>(String id, Object defaultValue) {
+  FutureOr<T?> getSetting<T>(String id, Object defaultValue) async {
     for (ISettingsStorage storage in _storages) {
-      FutureOr<T?> setting = storage.getSetting(id, defaultValue);
+      FutureOr<T?> setting = await storage.getSetting(id, defaultValue);
       if (setting != null) {
         return setting;
       }
@@ -48,13 +48,20 @@ class MultiSettingsStorage implements IStorageWorker {
   }
 
   @override
-  Future<void> removeSetting(String id) async {
+  Future<bool> removeSetting(String id) async {
     await Future.wait(_storages.map((storage) => storage.removeSetting(id)));
+    return true;
   }
 
   @override
-  Future<void> setSetting(String id, Object value) async {
-    await Future.wait(
-        _storages.map((storage) => storage.setSetting(id, value)));
+  Future<bool> setSetting(String id, Object value) async {
+    /* await Future.wait(
+        _storages.map((storage) => storage.setSetting(id, value))); */
+
+    for (ISettingsStorage storage in _storages) {
+      await storage.setSetting(id, value);
+    }
+
+    return true;
   }
 }

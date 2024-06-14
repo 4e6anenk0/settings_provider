@@ -17,7 +17,9 @@ class ConfigApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           initialRoute: '/',
-          theme: context.theme<GeneralConfig>().lightTheme,
+          theme: context
+              .theme<GeneralConfig>()
+              .lightTheme, // easy theme integration with hooks
           darkTheme: context.theme<GeneralConfig>().darkTheme,
           themeMode: property,
           home: const MyHomePage(title: 'Setting Example'),

@@ -1,5 +1,5 @@
-class NotUniqueIdExeption implements Exception {
-  NotUniqueIdExeption({required this.message, this.id});
+class NotUniqueIdException implements Exception {
+  NotUniqueIdException({required this.message, this.id});
 
   final String message;
   final String? id;
@@ -7,19 +7,19 @@ class NotUniqueIdExeption implements Exception {
   @override
   String toString() {
     return id == null
-        ? "NotUniqueIdExeption: $message"
+        ? "NotUniqueIdException: $message"
         : "The following ID failed the uniqueness check: $id";
   }
 }
 
-class AdapterExeption implements Exception {
-  AdapterExeption(this.message);
+class AdapterException implements Exception {
+  AdapterException(this.message);
 
   final String message;
 
   @override
   String toString() {
-    return "AdapterExeption: $message.";
+    return "AdapterException: $message.";
   }
 }
 

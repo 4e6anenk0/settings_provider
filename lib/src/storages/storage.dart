@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import '../properties/theme/theme_property.dart';
-import '../interfaces/storage_interface.dart';
+import 'storage_interface.dart';
 import '../properties/base/property.dart';
 import '../properties/enum/enum_property.dart';
 import 'workers/multi_storage_worker.dart';
@@ -18,6 +18,12 @@ class SettingsStorage {
     return _storage;
   }
 
+  factory SettingsStorage.getEmpty() {
+    _storage._storages.clear();
+    _storage._dependedTypes.clear();
+    return _storage;
+  }
+
   final Set<ISettingsStorage> _storages = {
     SharedPrefStorage(),
   };
@@ -29,22 +35,30 @@ class SettingsStorage {
     ThemeProperty: [SharedPrefStorage]
   };
 
-  bool _isInited = false;
-  bool get isInited => _isInited;
-  bool get isNotInited => !_isInited;
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
+  bool get isNotInitialized => !_isInitialized;
 
   Future<void> init() async {
     await Future.wait(_storages.map((storage) => storage.init()));
-    _isInited = true;
+    _isInitialized = true;
   }
 
   /// A method to set the property type's dependency on storage to store these properties.
   ///
   /// Can be used to register custom property types and storage types in the project.
-  void registerDependency(Type typeOfProperty, List<Type> typesOfStorage) {
+  void setDependency(Type typeOfProperty, List<Type> typesOfStorage) {
     assert(typeOfProperty is BaseProperty);
     if (isNotRegistered(typeOfProperty)) {
       _dependedTypes[typeOfProperty] = typesOfStorage;
+    }
+  }
+
+  /// Add a storages types to an already set type registration
+  void addDependency(Type typeOfProperty, List<Type> typesOfStorage) {
+    assert(typeOfProperty is BaseProperty);
+    if (isRegistered(typeOfProperty)) {
+      _dependedTypes[typeOfProperty]!.addAll(typesOfStorage);
     }
   }
 
@@ -80,7 +94,7 @@ class SettingsStorage {
       return getWorker(storageTypes);
     } else {
       throw Exception([
-        'There are no repositories matching the given type of poperty: ${typeOfProperty.toString()}.'
+        'There are no repositories matching the given type of property: ${typeOfProperty.toString()}.'
       ]);
     }
   }

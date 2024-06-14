@@ -27,7 +27,7 @@ class PropertyConverter implements IPropertyConverter {
     var adapter = _converters[property.type];
 
     if (adapter == null) {
-      throw AdapterExeption(
+      throw AdapterException(
           """The adapter for this type was not registered with PropertyAdapter. 
 You can't get the adapted controller the from _getAdaptedController method""");
     } else {

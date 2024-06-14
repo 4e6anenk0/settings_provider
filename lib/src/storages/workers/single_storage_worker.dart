@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../interfaces/storage_interface.dart';
+import '../storage_interface.dart';
 
 class SingleSettingsStorage implements IStorageWorker {
   SingleSettingsStorage(ISettingsStorage storage) {
@@ -31,12 +31,12 @@ class SingleSettingsStorage implements IStorageWorker {
   }
 
   @override
-  Future<void> removeSetting(String id) async {
-    await _storage.removeSetting(id);
+  Future<bool> removeSetting(String id) async {
+    return await _storage.removeSetting(id);
   }
 
   @override
-  Future<void> setSetting(String id, Object value) async {
-    await _storage.setSetting(id, value);
+  Future<bool> setSetting(String id, Object value) async {
+    return await _storage.setSetting(id, value);
   }
 }

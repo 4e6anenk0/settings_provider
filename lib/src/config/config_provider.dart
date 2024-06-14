@@ -35,15 +35,15 @@ class Config<T extends SingleChildWidget> extends StatefulWidget {
   }
 
   /// A method that allocates initialized settings models for the target platform
-  List<T> _getInitedSettingsProviders() {
-    List<T> initedProviders = [];
+  List<T> _getInitializedSettingsProviders() {
+    List<T> initializedProviders = [];
     for (T provider in providers) {
       var checkObject = provider as SettingsProvider<ConfigModel>;
-      if (checkObject.model.isInited) {
-        initedProviders.add(provider);
+      if (checkObject.model.isInitialized) {
+        initializedProviders.add(provider);
       }
     }
-    return initedProviders;
+    return initializedProviders;
   }
 
   /// The static `of()` method allows you to look up the implemented SettingsNotifier
@@ -115,7 +115,7 @@ class _ConfigState<T extends SingleChildWidget> extends State<Config<T>> {
   @override
   void initState() {
     super.initState();
-    _providers = widget._getInitedSettingsProviders();
+    _providers = widget._getInitializedSettingsProviders();
   }
 
   @override

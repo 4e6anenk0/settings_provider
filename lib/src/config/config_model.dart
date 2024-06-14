@@ -38,8 +38,8 @@ abstract class ConfigModel extends BaseSettingsModel {
   final PropertyConverter _converter = PropertyConverter();
   final SettingsStorage _storage = SettingsStorage.getInstance();
 
-  bool _isInited = false;
-  bool get isInited => _isInited;
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   @override
   ThemeProperty<ThemeDesc> get theme =>
@@ -68,12 +68,11 @@ abstract class ConfigModel extends BaseSettingsModel {
   Future<void> init() async {
     if (_isCorrectPlatform()) {
       try {
-        if (_storage.isNotInited) {
+        if (_storage.isNotInitialized) {
           await _storage.init();
         }
 
         if (themes != null) {
-          //print("Seting the themes");
           for (ThemeDesc themeDesc in themes!) {
             converter.preset(
                 targetProperty: theme, id: themeDesc.themeID, data: themeDesc);
@@ -86,7 +85,7 @@ abstract class ConfigModel extends BaseSettingsModel {
             storages: storages,
             converter: _converter);
 
-        _isInited = true;
+        _isInitialized = true;
       } catch (e) {
         throw InitializationError(model: runtimeType.toString());
       }

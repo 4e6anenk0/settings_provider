@@ -128,6 +128,7 @@ abstract class SettingsModel extends BaseSettingsModel {
   String get id => runtimeType.toString();
   bool get isDebug => false;
   ThemeProperty<ThemeDesc>? get defaultTheme => null;
+  bool get useEmptySettingsStorage => false;
 
   @override
   PropertyConverter get converter => _converter;
@@ -152,15 +153,19 @@ abstract class SettingsModel extends BaseSettingsModel {
       );
 
   late final SettingsController _controller;
+  late final SettingsStorage _storage;
   final PropertyConverter _converter = PropertyConverter();
-  final SettingsStorage _storage = SettingsStorage.getInstance();
 
-  bool _isInited = false;
-  bool get isInited => _isInited;
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   Future<void> init() async {
+    _storage = useEmptySettingsStorage
+        ? SettingsStorage.getEmpty()
+        : SettingsStorage.getInstance();
+
     try {
-      if (_storage.isNotInited) {
+      if (_storage.isNotInitialized) {
         await _storage.init();
       }
 
@@ -172,7 +177,7 @@ abstract class SettingsModel extends BaseSettingsModel {
         isDebug: isDebug,
       );
 
-      _isInited = true;
+      _isInitialized = true;
     } catch (e) {
       throw InitializationError(model: runtimeType.toString());
     }

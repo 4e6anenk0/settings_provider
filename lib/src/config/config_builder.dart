@@ -10,24 +10,24 @@ class ConfigBuilder<T extends SingleChildWidget> extends StatefulWidget {
   const ConfigBuilder({
     super.key,
     required this.builder,
-    required this.providers,
+    required this.configs,
   });
 
   /// A method that allocates initialized settings models for the target platform
-  List<T> _getInitedSettingsProviders() {
-    List<T> initedProviders = [];
-    for (T provider in providers) {
+  List<T> _getInitializedSettingsProviders() {
+    List<T> initializedProviders = [];
+    for (T provider in configs) {
       var checkObject = provider as SettingsProvider<ConfigModel>;
-      if (checkObject.model.isInited) {
-        initedProviders.add(provider);
+      if (checkObject.model.isInitialized) {
+        initializedProviders.add(provider);
       }
     }
-    return initedProviders;
+    return initializedProviders;
   }
 
   final Widget Function(BuildContext context, ConfigPlatform platform) builder;
 
-  final List<T> providers;
+  final List<T> configs;
 
   @override
   State<ConfigBuilder> createState() => _ConfigState();
@@ -40,7 +40,7 @@ class _ConfigState<T extends SingleChildWidget>
   @override
   void initState() {
     super.initState();
-    _providers = widget._getInitedSettingsProviders();
+    _providers = widget._getInitializedSettingsProviders();
   }
 
   @override

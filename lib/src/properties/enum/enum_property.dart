@@ -5,7 +5,7 @@ import '../base/property.dart';
 /// EnumProperty can be treated as a Property. It can also be accessed through
 /// methods similar to those in a standard Property. The difference is its
 /// ability to handy use Enum in a local storage for re-mapping with
-/// the corresponding Enum after inited new session.
+/// the corresponding Enum after initialized new session.
 /// With the EnumPropertyBuilder, dynamic configurations that depend on Enum can be
 /// easily created.
 class EnumProperty<T extends Enum> extends BaseProperty<T> {

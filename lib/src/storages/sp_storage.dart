@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../interfaces/storage_interface.dart';
+import 'storage_interface.dart';
 
 class SharedPrefStorage implements ISettingsStorage {
   late SharedPreferences _storage;
@@ -55,14 +55,14 @@ class SharedPrefStorage implements ISettingsStorage {
   }
 
   @override
-  Future<void> setSetting(String id, Object value) async {
+  Future<bool> setSetting(String id, Object value) async {
     Function callback = _setSharedPreferencesCallback(value.runtimeType);
-    await callback(id, value);
+    return await callback(id, value);
   }
 
   @override
-  Future<void> removeSetting(String id) async {
-    await _storage.remove(id);
+  Future<bool> removeSetting(String id) async {
+    return await _storage.remove(id);
   }
 
   @override

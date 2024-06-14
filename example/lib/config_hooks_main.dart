@@ -19,7 +19,7 @@ void main() async {
 
   runApp(
     ConfigBuilder(
-      providers: [
+      configs: [
         SettingsProvider(
           model: generalConfig,
         ),
