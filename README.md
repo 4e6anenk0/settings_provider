@@ -1,4 +1,4 @@
-# Settings Provider (Warning! A new library is currently under development)
+# Settings Provider (Warning! A new library is currently under development. This library not recommended for production)
 
 <p align="center">
     <img width=200 height=200 src="https://github.com/4e6anenk0/settings_provider/blob/main/img/logo-2.png?raw=true" alt="Logo">
